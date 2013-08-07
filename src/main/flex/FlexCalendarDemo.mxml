@@ -4,7 +4,7 @@
 		  xmlns:mx="library://ns.adobe.com/flex/mx"
 		  xmlns:flexcalendar="com.flexcalendar.components.calendar.*"
 		  xmlns:widgets="com.flexcalendar.components.calendar.widgets.*"
-		  xmlns:sample="com.flexcalendar.components.calendar.sample.*"
+		  xmlns:sample="com.flexcalendar.demo.*"
 			backgroundColor="0xffffff"
 			minHeight="500" minWidth="700"
 			applicationComplete="completeHandler();">
@@ -75,7 +75,7 @@
 		import com.flexcalendar.components.calendar.events.CalendarMouseEvent;
 		import com.flexcalendar.components.calendar.events.GetEventsForDateRangeErrorEvent;
 		import com.flexcalendar.components.calendar.events.GetEventsForDateRangeSuccessEvent;
-		import com.flexcalendar.components.calendar.sample.DataProviderBuilder;
+		import com.flexcalendar.demo.DataProviderBuilder;
 		import com.flexcalendar.components.calendar.utils.CalendarMode;
 		import com.flexcalendar.components.calendar.utils.DateUtils;
 		import com.flexcalendar.components.calendar.displayClasses.renderers.modern.ModernCalendarDayViewItemRenderer;
@@ -316,7 +316,6 @@
 		{
 			trace("CalendarItemSetMetadataUpdatedEvent");
 		}
-
 		]]>
 	</fx:Script>
 

@@ -1,11 +1,11 @@
-package com.flexcalendar.components.calendar.sample
+package com.flexcalendar.demo
 {
+import com.flexcalendar.components.calendar.core.dataModel.CalendarDataProvider;
 import com.flexcalendar.components.calendar.core.dataModel.CalendarItem;
 import com.flexcalendar.components.calendar.core.dataModel.CalendarItemSet;
-import com.flexcalendar.components.calendar.core.dataModel.ICalendarItemSet;
 import com.flexcalendar.components.calendar.core.dataModel.ICalendarItem;
+import com.flexcalendar.components.calendar.core.dataModel.ICalendarItemSet;
 import com.flexcalendar.components.calendar.core.dataModel.ItemType;
-import com.flexcalendar.components.calendar.core.dataModel.CalendarDataProvider;
 import com.flexcalendar.components.calendar.core.dataModel.formatICalendar.Recur;
 import com.flexcalendar.components.calendar.displayClasses.decoration.IRendererColors;
 import com.flexcalendar.components.calendar.displayClasses.decoration.RendererColors;
@@ -14,8 +14,6 @@ import com.flexcalendar.components.calendar.utils.DateOptions;
 import com.flexcalendar.components.calendar.utils.DateUtils;
 
 import mx.collections.ArrayCollection;
-
-import spark.primitives.Rect;
 
 public class DataProviderBuilder
 {

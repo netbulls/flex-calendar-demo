@@ -1,4 +1,4 @@
-package com.flexcalendar.components.calendar.sample
+package com.flexcalendar.demo
 {
 public class ItemSetVO
 {

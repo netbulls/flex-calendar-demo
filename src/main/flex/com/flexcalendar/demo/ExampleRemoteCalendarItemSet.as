@@ -1,10 +1,7 @@
-package com.flexcalendar.components.calendar.sample
+package com.flexcalendar.demo
 {
 import com.flexcalendar.components.calendar.core.DateRange;
 import com.flexcalendar.components.calendar.core.dataModel.BaseRemoteCalendarItemSet;
-import com.flexcalendar.components.calendar.core.dataModel.CalendarItem;
-import com.flexcalendar.components.calendar.core.dataModel.CalendarItemSet;
-import com.flexcalendar.components.calendar.core.dataModel.IRemoteCalendarItemSet;
 import com.flexcalendar.components.calendar.displayClasses.decoration.IRendererColors;
 import com.flexcalendar.components.calendar.events.CalendarItemAddedEvent;
 import com.flexcalendar.components.calendar.events.CalendarItemModificationEvent;
@@ -12,8 +9,6 @@ import com.flexcalendar.components.calendar.events.CalendarItemRemovedEvent;
 import com.flexcalendar.components.calendar.events.GetEventsForDateRangeSuccessEvent;
 
 import flash.utils.setTimeout;
-
-import mx.controls.Alert;
 
 public class ExampleRemoteCalendarItemSet extends BaseRemoteCalendarItemSet
 {
