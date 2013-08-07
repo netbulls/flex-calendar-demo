@@ -1,0 +1,171 @@
+<?xml version="1.0"?>
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 width="150">
+
+	<fx:Script><![CDATA[
+		import com.flexcalendar.components.calendar.core.dataModel.CalendarItemSet;
+		import com.flexcalendar.components.calendar.core.dataModel.ICalendarDataProvider;
+		import com.flexcalendar.components.calendar.core.dataModel.ICalendarItemSet;
+		import com.flexcalendar.components.calendar.displayClasses.decoration.RendererColors;
+		import com.flexcalendar.components.calendar.utils.Colors;
+
+		import mx.collections.ArrayCollection;
+		import mx.containers.HBox;
+		import mx.controls.Button;
+		import mx.controls.CheckBox;
+		import mx.controls.ColorPicker;
+		import mx.controls.TextInput;
+
+		private var _dataProvider:ICalendarDataProvider;
+
+		private var itemSetVOCollection:ArrayCollection = new ArrayCollection();
+
+		[Bindable]
+		public function get dataProvider():ICalendarDataProvider
+		{
+			return _dataProvider;
+		}
+
+		public function set dataProvider(value:ICalendarDataProvider):void
+		{
+			_dataProvider = value;
+
+			updateChildRows();
+		}
+
+		private function updateChildRows():void
+		{
+			itemSetsBox.removeAllChildren();
+			itemSetVOCollection.removeAll();
+
+			for (var i:int = 0; i < _dataProvider.getItemSetsCount(); i++)
+			{
+				var calendarItemSet:ICalendarItemSet = _dataProvider.getItemSetAt(i);
+
+				var itemSetVO:ItemSetVO = new ItemSetVO(calendarItemSet.name, calendarItemSet.visible,
+						calendarItemSet.itemSetColors ? calendarItemSet.itemSetColors.bgColor : 0, false, false);
+				this.itemSetVOCollection.addItem(itemSetVO);
+				addItemSetRow(itemSetVO);
+			}
+		}
+
+		private function addItemSetRow(itemSetVO:ItemSetVO):void
+		{
+			var itemSetHBox:HBox = new HBox();
+			itemSetHBox.data = itemSetVO;
+			var itemSetCheckBox:CheckBox = new CheckBox();
+			itemSetCheckBox.selected = itemSetVO.visible;
+			itemSetCheckBox.addEventListener(Event.CHANGE, visibleChangedFunction);
+			itemSetHBox.addChild(itemSetCheckBox);
+			var itemSetTextInput:TextInput = new TextInput();
+			itemSetTextInput.width = 85;
+			itemSetTextInput.text = itemSetVO.name;
+			itemSetTextInput.addEventListener(Event.CHANGE, nameChangedFunction);
+			itemSetHBox.addChild(itemSetTextInput);
+			var colorPicker:ColorPicker = new ColorPicker();
+			colorPicker.selectedColor = itemSetVO.backgroundColor;
+			colorPicker.addEventListener(Event.CHANGE, colorChangedFunction);
+			itemSetHBox.addChild(colorPicker);
+			var removeButton:Button = new Button();
+			removeButton.width = 25;
+			removeButton.label = "x";
+			removeButton.addEventListener(MouseEvent.CLICK, removeRowFunction);
+			itemSetHBox.addChild(removeButton);
+
+			itemSetsBox.addChild(itemSetHBox);
+		}
+
+		private function visibleChangedFunction(event:Event):void
+		{
+			event.target.parent.data.visible = !event.target.parent.data.visible;
+		}
+
+		private function nameChangedFunction(event:Event):void
+		{
+			event.target.parent.data.name = event.target.text;
+		}
+
+		private function colorChangedFunction(event:Event):void
+		{
+			event.target.parent.data.backgroundColor = event.target.selectedColor;
+		}
+
+		private function removeRowFunction(event:MouseEvent):void
+		{
+			event.target.parent.data.deleted = true;
+			event.target.parent.visible = false;
+			event.target.parent.includeInLayout = false;
+		}
+
+		private function addNew():void
+		{
+			var itemSetVO:ItemSetVO = new ItemSetVO(resourceManager.getString('sampleApp', 'config.panel.calendar.newItem.name'),
+					true, 0, true, false);
+			addItemSetRow(itemSetVO);
+			this.itemSetVOCollection.addItem(itemSetVO);
+		}
+
+		private function cancel():void
+		{
+			updateChildRows();
+		}
+
+		private function save():void
+		{
+			for (var i:int; i < itemSetVOCollection.length; i++)
+			{
+				var itemSetVO:ItemSetVO = itemSetVOCollection.getItemAt(i) as ItemSetVO;
+				var itemSet:ICalendarItemSet;
+				if (itemSetVO.deleted)
+				{
+					if(!itemSetVO.isNew)
+					{
+						dataProvider.removeItemSet(dataProvider.getItemSetAt(i));
+					}
+					itemSetVOCollection.removeItemAt(i);
+					i--;
+					continue;
+				}
+
+				if (itemSetVO.isNew)
+				{
+					itemSet = new CalendarItemSet();
+					dataProvider.addItemSet(itemSet);
+				}
+				else
+				{
+					itemSet = dataProvider.getItemSetAt(i) as ICalendarItemSet;
+				}
+
+				itemSet.name = itemSetVO.name;
+				itemSet.visible = itemSetVO.visible;
+				if (itemSetVO.backgroundColor != 0)
+					itemSet.itemSetColors =
+							new RendererColors(Colors.WHITE, itemSetVO.backgroundColor, NaN, itemSetVO.backgroundColor, NaN);
+				else
+					itemSet.itemSetColors = null;
+
+			}
+			if (dataProvider.getItemSetsCount() == 0)
+				dataProvider.addItemSet(new CalendarItemSet());
+
+			dataProvider.parentCalendarComponent.refresh();
+			updateChildRows();
+		}
+		]]></fx:Script>
+
+	<fx:Metadata>
+		[ResourceBundle("sampleApp")]
+	</fx:Metadata>
+
+	<mx:VBox id="itemSetsBox" width="100%"/>
+	<mx:HBox id="buttonBox" width="100%">
+		<mx:Button label="{resourceManager.getString('sampleApp', 'config.panel.calendar.new')}" width="50" click="addNew()"/>
+		<mx:Button label="{resourceManager.getString('sampleApp', 'config.panel.calendar.save')}" width="50" click="save()"/>
+		<mx:Button label="{resourceManager.getString('sampleApp', 'config.panel.calendar.cancel')}" width="55" click="cancel()"/>
+	</mx:HBox>
+
+
+</mx:VBox>

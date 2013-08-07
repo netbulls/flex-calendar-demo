@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application name="flexCalendarSample" xmlns:fx="http://ns.adobe.com/mxml/2009"
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  xmlns:flexcalendar="com.flexcalendar.components.calendar.*"
+		  xmlns:widgets="com.flexcalendar.components.calendar.widgets.*"
+		  xmlns:sample="com.flexcalendar.components.calendar.sample.*"
+			backgroundColor="0xffffff"
+			minHeight="500" minWidth="700"
+			applicationComplete="completeHandler();">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+
+    <!--&lt;!&ndash; remove this line for Flash Builder &ndash;&gt;-->
+	<!--<fx:Style source="../../../../../calendar/src/main/flex4/defaults.css"/>-->
+
+	<fx:Style>
+		@namespace flexcalendar "com.flexcalendar.components.calendar.*";
+		@namespace headers "com.flexcalendar.components.calendar.displayClasses.headers.*";
+		@namespace containers "com.flexcalendar.components.calendar.displayClasses.*";
+		@namespace grids "com.flexcalendar.components.calendar.displayClasses.grids.*";
+		@namespace displayClasses "com.flexcalendar.components.calendar.displayClasses.*";
+		@namespace defaultRenderers "com.flexcalendar.components.calendar.displayClasses.renderers.defaults.*";
+
+		defaultRenderers|DefaultCalendarDayViewAvailableSpaceRenderer {
+			textColor: #000000;
+			backgroundColor: #ffffff;
+			headerBackgroundColor: #ffffff;
+			borderColor: #dedede;
+			backgroundType: "solid";
+		}
+
+		defaultRenderers|DefaultCalendarDayViewUnavailableSpaceRenderer {
+			rendererAlpha: 1;
+			backgroundColor: #dedede;
+			headerBackgroundColor: #dedede;
+			borderColor: #ffffff;
+			backgroundType: "solid";
+		}
+
+		.flexCalendarExcessIndicator {
+			color: #CC0000;
+			fontStyle: italic;
+		}
+
+		grids|MonthViewGrid {
+			currentDayBackgroundColor: #CC0000;
+			currentDayBackgroundAlpha: 0.5;
+			currentDayCellHeaderBackground: #00FF00;
+        }
+
+		grids|DayViewGrid {
+			rightFreeSpace: 4;
+			leftFreeSpace: 2;
+		}
+
+	</fx:Style>
+	
+	<fx:Script>
+		<![CDATA[
+		import com.flexcalendar.components.calendar.core.dataModel.CalendarDataProvider;
+		import com.flexcalendar.components.calendar.core.dataModel.CalendarDataProvider;
+		import com.flexcalendar.components.calendar.core.dataModel.ICalendarDataProvider;
+
+		import com.flexcalendar.components.calendar.editor.baloon.BaloonItemEditor;
+		import com.flexcalendar.components.calendar.core.DateRange;
+
+		import com.flexcalendar.components.calendar.displayClasses.renderers.defaults.DefaultCalendarDayViewItemRenderer;
+		import com.flexcalendar.components.calendar.editor.baloon.BaloonItemEditor;
+		import com.flexcalendar.components.calendar.events.CalendarItemAddedEvent;
+		import com.flexcalendar.components.calendar.events.CalendarItemModificationEvent;
+		import com.flexcalendar.components.calendar.events.CalendarItemRemovedEvent;
+		import com.flexcalendar.components.calendar.events.CalendarItemSetMetadataUpdatedEvent;
+		import com.flexcalendar.components.calendar.events.CalendarMouseEvent;
+		import com.flexcalendar.components.calendar.events.GetEventsForDateRangeErrorEvent;
+		import com.flexcalendar.components.calendar.events.GetEventsForDateRangeSuccessEvent;
+		import com.flexcalendar.components.calendar.sample.DataProviderBuilder;
+		import com.flexcalendar.components.calendar.utils.CalendarMode;
+		import com.flexcalendar.components.calendar.utils.DateUtils;
+		import com.flexcalendar.components.calendar.displayClasses.renderers.modern.ModernCalendarDayViewItemRenderer;
+		import com.flexcalendar.components.calendar.events.AlarmEvent;
+
+		import mx.events.CalendarLayoutChangeEvent;
+
+
+		public var dataProviderBuilder:DataProviderBuilder;
+		[Bindable]
+		public var dp:CalendarDataProvider;
+
+		[Bindable]
+		public var visibleDateRange:DateRange;
+
+		[Bindable]
+		private var leftComponentsWidth:Number = 190;
+
+		protected function completeHandler(event:Event = null):void
+		{
+
+			defaultLocale = resourceManager.localeChain[0];
+
+			fromDateChooser.addEventListener(CalendarLayoutChangeEvent.CHANGE, updateRange);
+			toDateChooser.addEventListener(CalendarLayoutChangeEvent.CHANGE, updateRange);
+
+			dataProviderBuilder = new DataProviderBuilder();
+			//create sample CalendarDataProvider
+			dp = dataProviderBuilder.buildExampleDataProvider();
+
+			var today:Date = DateUtils.startOfDay(new Date());
+
+			var startRange:Date = DateUtils.startOfDay(new Date());
+			var endRange:Date = DateUtils.endOfDay(new Date());
+
+
+			DateUtils.addDays(startRange, 0 - today.day);
+			DateUtils.addDays(endRange, 0 - today.day + 6);
+
+			visibleDateRange = new DateRange(startRange, endRange);
+		}
+
+
+		protected function updateRange(event:CalendarLayoutChangeEvent):void
+		{
+
+			//sanity check
+			if (toDateChooser.selectedDate < fromDateChooser.selectedDate)
+			{
+				//reset val	ues
+				fromDateChooser.selectedDate = flexCalendar.visibleRange.start;
+				toDateChooser.selectedDate = flexCalendar.visibleRange.end;
+			}
+			else
+			{
+				flexCalendar.visibleRange = new DateRange(DateUtils.startOfDay(fromDateChooser.selectedDate),
+						DateUtils.endOfDay(toDateChooser.selectedDate));
+			}
+		}
+
+		private function calendarMouseClickHandler(event:CalendarMouseEvent):void
+		{
+			trace("Selected date: " + event.selectedDate);
+			trace("Preferred new event time: " + event.preferredTimeInMills);
+			trace("Mouse event: " + event.event);
+		}
+
+
+		private function calendarRendererMouseClickHandler(event:CalendarMouseEvent):void
+		{
+			trace("Selected renderer start date: " + event.selectedDate);
+			trace("Selected item details: " + event.item)
+			trace("Selected item summary: " + event.item.summary);
+			trace("Mouse event: " + event.event);
+		}
+
+		private function calendarItemAdded(event:CalendarItemAddedEvent):void
+		{
+			trace("Item added");
+		}
+
+		private function calendarItemRemoved(event:CalendarItemRemovedEvent):void
+		{
+			trace("Item removed");
+		}
+
+		private function calendarItemModified(event:CalendarItemModificationEvent):void
+		{
+			trace("Item modified");
+		}
+
+		private function calendarAlarmEvent(event:AlarmEvent):void
+		{
+			trace("Item alarm " + event.itemDetails.calendarItem.summary);
+		}
+
+		[Bindable]
+		private var locales:Array = ["en_US", "pt_BR"];
+		[Bindable]
+		private var minutes:Array = [10, 20, 30, 60];
+		[Bindable]
+		private var selectedMinute:Number = 30;
+		[Bindable]
+		private var defaultLocale:Object;
+		[Bindable]
+		private var calendarMode:int = CalendarMode.FREE_EDIT_MODE;
+		[Bindable]
+		private var calendarStyles:Array = ["default", "modern"];
+
+		private function localeComboChangeHandler():void
+		{
+			resourceManager.localeChain = [ localeComboBox.selectedItem, "en_US"];
+		}
+
+		private function granularityMinutesChanged():void
+		{
+			selectedMinute = granularityMinutesComboBox.selectedItem as Number;
+		}
+
+		private function calendarReadonlyClicked():void
+		{
+			if (calendarReadonlyChckbox.selected)
+			{
+				calendarMode = CalendarMode.READ_ONLY_MODE;
+			}
+			else
+			{
+				calendarMode = CalendarMode.FREE_EDIT_MODE;
+			}
+		}
+
+		private function limitedEditModeClicked():void
+		{
+			if (null != calendarReadonlyChckbox)
+				calendarReadonlyChckbox.selected = false;
+			if (limitedEditModeChckbox.selected)
+			{
+				calendarMode = CalendarMode.LIMITED_EDIT_MODE;
+				if (!workingHoursChckbox.selected)
+				{
+					workingHoursChckbox.selected = true;
+					workingHoursClicked();
+				}
+			}
+			else
+			{
+				calendarMode = CalendarMode.FREE_EDIT_MODE;
+			}
+		}
+
+		private function holidaysClicked():void
+		{
+			if (holidaysChckbox.selected)
+			{
+				dataProviderBuilder.addHolidays(dp.getItemSetAt(0));
+			}
+			else
+			{
+				dataProviderBuilder.removeHolidays(dp.getItemSetAt(0));
+			}
+			flexCalendar.refresh();
+		}
+
+		private function workingHoursClicked():void
+		{
+			if (workingHoursChckbox.selected)
+			{
+				dataProviderBuilder.addWorkingHours(dp.getItemSetAt(0));
+				flexCalendar.calendarDayViewContainer.dayViewGrid.setStyle("backgroundColor", 0xdedede);
+			}
+			else
+			{
+				dataProviderBuilder.removeWorkingHours(dp.getItemSetAt(0));
+				flexCalendar.calendarDayViewContainer.dayViewGrid.setStyle("backgroundColor", 0xffffff);
+			}
+			flexCalendar.refresh();
+		}
+
+		public function visibleHoursRangeClicked():void
+		{
+
+		}
+
+		public function doHeavyLoad():void
+		{
+			dataProviderBuilder.populateHeavyLoad(dp.getItemSetAt(0), 100);
+			flexCalendar.invalidateCache();
+			flexCalendar.refresh();
+		}
+
+		public function calendarStyleChanged():void
+		{
+			if (calendarStylesComboBox.selectedItem === "modern")
+			{
+				flexCalendar.setStyle("headerHeight", 45);
+
+				flexCalendar.calendarHeader.styleName = "modernCalendarHeader";
+				flexCalendar.calendarDayViewContainer.styleName = "modernDayViewContainer";
+				flexCalendar.monthViewContainer.styleName = "modernMonthViewContainer";
+				flexCalendar.calendarDayViewContainer.dayViewHeader.styleName = "modernCalendarDayViewHeader";
+				flexCalendar.monthViewContainer.monthViewHeader.styleName = "modernCalendarMonthViewHeader";
+				flexCalendar.monthViewContainer.monthViewGrid.styleName = "modernMonthViewGrid";
+				flexCalendar.calendarDayViewContainer.dayViewGrid.styleName = "modernDayViewGrid";
+				flexCalendar.calendarDayViewContainer.dayScrollBar.styleName = "modernScrollBar";
+
+				flexCalendar.calendarDayViewItemRenderer = ModernCalendarDayViewItemRenderer;
+
+			}
+			else
+			{
+				flexCalendar.setStyle("headerHeight", 34);
+
+				flexCalendar.calendarHeader.styleName = undefined;
+				flexCalendar.calendarDayViewContainer.styleName = undefined;
+				flexCalendar.monthViewContainer.styleName = undefined;
+				flexCalendar.calendarDayViewContainer.dayViewHeader.styleName = undefined;
+				flexCalendar.monthViewContainer.monthViewHeader.styleName = undefined;
+				flexCalendar.monthViewContainer.monthViewGrid.styleName = undefined;
+				flexCalendar.calendarDayViewContainer.dayViewGrid.styleName = undefined;
+				flexCalendar.calendarDayViewContainer.dayScrollBar.styleName = undefined;
+
+				flexCalendar.calendarDayViewItemRenderer = DefaultCalendarDayViewItemRenderer;
+			}
+			flexCalendar.refresh();
+		}
+
+		private function getEventsForDateRangeSuccess(event:GetEventsForDateRangeSuccessEvent):void
+		{
+			trace("getEventsForDateRangeSuccess");
+		}
+
+		private function getEventsForDateRangeError(event:GetEventsForDateRangeErrorEvent):void
+		{
+			trace("getEventsForDateRangeError");
+		}
+
+		private function calendarItemSetMetadataUpdatedEvent(event:CalendarItemSetMetadataUpdatedEvent):void
+		{
+			trace("CalendarItemSetMetadataUpdatedEvent");
+		}
+
+		]]>
+	</fx:Script>
+
+	<fx:Metadata>
+		[ResourceBundle("sampleApp")]
+	</fx:Metadata>
+
+	<mx:HBox width="100%" height="100%" paddingTop="20" paddingRight="20" paddingBottom="20" paddingLeft="20">
+
+		<mx:VBox height="100%" width="{leftComponentsWidth}">
+			<mx:DateChooser id="fromDateChooser" selectedDate="{flexCalendar.visibleRange.start}" width="100%"/>
+			<mx:DateChooser id="toDateChooser" selectedDate="{flexCalendar.visibleRange.end}" width="100%"/>
+			<mx:Accordion selectedIndex="2" width="{leftComponentsWidth}" height="300">
+				<mx:VBox label="{resourceManager.getString('sampleApp','config.panel.global.settings.title')}" width="100%" styleName="configPanelVbox">
+					<mx:CheckBox id="calendarReadonlyChckbox" label="{resourceManager.getString('sampleApp','config.panel.global.settings.readonly')}" click="calendarReadonlyClicked()" selected="false"/>
+					<mx:CheckBox id="hideCalendarHeader" label="{resourceManager.getString('sampleApp','config.panel.global.settings.header')}" selected="true"/>
+					<mx:CheckBox id="currentTimeIndicator" label="{resourceManager.getString('sampleApp','config.panel.global.settings.current.time.indicator')}" selected="true"/>
+					<mx:CheckBox id="currentDayIndicator" label="{resourceManager.getString('sampleApp','config.panel.global.settings.current.day.indicator')}" selected="true"/>
+
+				</mx:VBox>
+				<mx:VBox  label="{resourceManager.getString('sampleApp','config.panel.styles.title')}" width="100%" styleName="configPanelVbox">
+
+					<mx:Spacer/>
+					<mx:Label text="{resourceManager.getString('sampleApp','config.panel.granularityMinutes.choose')}"/>
+					<mx:ComboBox id="granularityMinutesComboBox" dataProvider="{minutes}" selectedItem="{30}" change="granularityMinutesChanged()"/>
+					<mx:Label text="{resourceManager.getString('sampleApp','config.panel.style.choose')}"/>
+					<mx:ComboBox id="calendarStylesComboBox" dataProvider="{calendarStyles}" selectedItem="default" change="calendarStyleChanged()"/>
+				</mx:VBox>
+				<mx:VBox  label="{resourceManager.getString('sampleApp','config.panel.pro.title')}" width="100%" styleName="configPanelVbox">
+					<mx:CheckBox id="limitedEditModeChckbox" label="{resourceManager.getString('sampleApp','config.panel.pro.limited.checkbox')}" click="limitedEditModeClicked()" selected="false"/>
+					<mx:CheckBox id="holidaysChckbox" label="{resourceManager.getString('sampleApp','config.panel.pro.holidays.checkbox')}" click="holidaysClicked()" selected="false"/>
+					<mx:CheckBox id="workingHoursChckbox" label="{resourceManager.getString('sampleApp','config.panel.pro.workinghours.checkbox')}" click="workingHoursClicked()" selected="false"/>
+					<mx:CheckBox id="visibleHoursRangeChckbox" label="{resourceManager.getString('sampleApp','config.panel.visiblyHoursRange.label')}" click="visibleHoursRangeClicked()" selected="false"/>
+					<mx:HSlider id="visibleHoursStartSlider" visible="{visibleHoursRangeChckbox.selected}" includeInLayout="{visibleHoursRangeChckbox.selected}" minimum="0" maximum="23" snapInterval="1" value="7" labels="['0','3','6','9','12','15','18','21','24']"/>
+					<mx:HSlider id="visibleHoursEndSlider" visible="{visibleHoursRangeChckbox.selected}" includeInLayout="{visibleHoursRangeChckbox.selected}" minimum="1" maximum="24" snapInterval="1" value="17" labels="['0','3','6','9','12','15','18','21','24']"/>
+				</mx:VBox>
+				<mx:VBox label="{resourceManager.getString('sampleApp','config.panel.performance.title')}" width="100%" styleName="configPanelVbox">
+					<mx:Spacer height="10"/>
+					<mx:Button label="{resourceManager.getString('sampleApp','config.panel.heavyLoad')}" click="doHeavyLoad()"/>
+				</mx:VBox>
+				<mx:VBox label="{resourceManager.getString('sampleApp','config.panel.calendar.title')}" width="100%" styleName="configPanelVbox">
+					<widgets:CalendarsChooserWidget dataProvider="{dp}" width="100%" height="100%" editableLabels="false" showColorsPicker="false"/>
+				</mx:VBox>
+				<mx:VBox label="{resourceManager.getString('sampleApp','config.panel.localization.title')}" width="100%" styleName="configPanelVbox">
+						<mx:Label text="{resourceManager.getString('sampleApp','config.panel.localization.choose')}"/>
+						<mx:ComboBox id="localeComboBox" dataProvider="{locales}" change="localeComboChangeHandler()" selectedItem="{defaultLocale}"/>
+				</mx:VBox>
+			</mx:Accordion>
+			<s:Button label="Test recur" click="dataProviderBuilder.testRecur()"/>
+			<s:Label text="Loading data..." includeInLayout="{flexCalendar.backgroundProcessing}" visible="{flexCalendar.backgroundProcessing}"/>
+
+		</mx:VBox>
+
+		<flexcalendar:FlexCalendar id="flexCalendar" width="100%" height="100%" dataProvider="{dp}" scaleX="1" visibleRange="{visibleDateRange}"
+								scaleY="1" itemEditor="{new BaloonItemEditor(flexCalendar, false, false, true, true, true)}"
+								calendarMode="{calendarMode}"
+								headerVisible="{hideCalendarHeader.selected}"
+								currentTimeIndicator="{currentTimeIndicator.selected}"
+								currentDayIndicator="{currentDayIndicator.selected}"
+								doubleClickEnabled="true"
+								calendarItemAddedEvent="calendarItemAdded(event)"
+								calendarItemRemovedEvent="calendarItemRemoved(event)"
+								calendarItemModificationEvent="calendarItemModified(event)"
+								getEventsForDateRangeSuccessEvent="getEventsForDateRangeSuccess(event)"
+								getEventsForDateRangeErrorEvent="getEventsForDateRangeError(event)"
+								calendarItemSetMetadataUpdatedEvent="calendarItemSetMetadataUpdatedEvent(event)"
+
+								availableSpaceIsMoreImportantThanUnavailableSpace="true"
+
+                                calendarMouseClick="trace('calendarMouseClick')"
+                                calendarMouseDoubleClick="trace('calendarMouseDoubleClick')"
+                                calendarRendererMouseClick="trace('calendarRendererMouseClick')"
+                                calendarRendererMouseDoubleClick="trace('calendarRendererMouseDoubleClick')"
+                                calendarSpaceRendererMouseClick="trace('calendarSpaceRendererMouseClick')"
+                                calendarSpaceRendererMouseDoubleClick="trace('calendarSpaceRendererMouseDoubleClick')"
+								snapToGridThreshold="{selectedMinute}"
+								visibleHoursStart="{visibleHoursStartSlider.value}"
+								visibleHoursEnd="{visibleHoursEndSlider.value}"
+								visibleHoursLimited="{visibleHoursRangeChckbox.selected}"
+								granularityMinutes="{selectedMinute}"
+								calendarAlarmEvent="calendarAlarmEvent(event)"
+
+								cacheTimeToLive="{DateUtils.MILLI_IN_SECOND * 30}"
+
+								columnModeEnabled="true"
+								/>
+
+	</mx:HBox>
+</s:Application>

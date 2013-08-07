@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<description>Flex Calendar Demo</description>
+	<groupId>com.flex-calendar</groupId>
+	<artifactId>flex-calendar-demo</artifactId>
+	<version>2.0.0-beta3</version>
+	<packaging>swf</packaging>
+
+	<properties>
+		<adobe.flex.sdk.version>4.6.0.23201</adobe.flex.sdk.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<build>
+		<sourceDirectory>src/main/flex</sourceDirectory>
+		<plugins>
+			<plugin>
+				<groupId>net.flexmojos.oss</groupId>
+				<artifactId>flexmojos-maven-plugin</artifactId>
+				<version>6.0.0</version>
+				<extensions>true</extensions>
+				<dependencies>
+					<dependency>
+						<groupId>com.adobe.flex</groupId>
+						<artifactId>compiler</artifactId>
+						<version>${adobe.flex.sdk.version}</version>
+						<type>pom</type>
+					</dependency>
+				</dependencies>
+				<configuration>
+
+					<skipTests>true</skipTests>
+					<headlessServer>true</headlessServer>
+
+					<debug>false</debug>
+					<storepass>empty</storepass>
+					<sourceFile>${project.build.sourceDirectory}/app.mxml</sourceFile>
+					<localesCompiled>
+						<locale>en_US</locale>
+						<!--<locale>pt_BR</locale>-->
+					</localesCompiled>
+					<themes>
+						<theme>
+							${settings.localRepository}/com/adobe/flex/framework/spark/${adobe.flex.sdk.version}/spark-${adobe.flex.sdk.version}.swc
+						</theme>
+					</themes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.4.3</version>
+				<configuration>
+					<skip>true</skip>
+					<skipTests>true</skipTests>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.adobe.flex.framework</groupId>
+			<artifactId>flex-framework</artifactId>
+			<version>${adobe.flex.sdk.version}</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>com.flex-calendar</groupId>
+			<artifactId>flex-calendar-component</artifactId>
+			<version>2.0.0-beta3</version>
+			<type>swc</type>
+		</dependency>
+	</dependencies>
+	<repositories>
+		<repository>
+			<id>netbulls-public</id>
+			<name>Public NETBULLS Maven Repository</name>
+			<url>http://archiva.netbulls.pl/archiva/repository/public/</url>
+		</repository>
+	</repositories>
+
+</project>
