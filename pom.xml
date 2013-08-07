@@ -12,7 +12,9 @@
 
 	<properties>
 		<adobe.flex.sdk.version>4.6.0.23201</adobe.flex.sdk.version>
+		<flexmojos.version>6.0.1</flexmojos.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.test.skip>true</maven.test.skip>
 	</properties>
 
 	<build>
@@ -21,7 +23,7 @@
 			<plugin>
 				<groupId>net.flexmojos.oss</groupId>
 				<artifactId>flexmojos-maven-plugin</artifactId>
-				<version>6.0.0</version>
+				<version>${flexmojos.version}</version>
 				<extensions>true</extensions>
 				<dependencies>
 					<dependency>
@@ -32,13 +34,10 @@
 					</dependency>
 				</dependencies>
 				<configuration>
-
-					<skipTests>true</skipTests>
 					<headlessServer>true</headlessServer>
-
 					<debug>false</debug>
 					<storepass>empty</storepass>
-					<sourceFile>${project.build.sourceDirectory}/app.mxml</sourceFile>
+					<sourceFile>${project.build.sourceDirectory}/FlexCalendarDemo.mxml</sourceFile>
 					<localesCompiled>
 						<locale>en_US</locale>
 						<!--<locale>pt_BR</locale>-->
@@ -56,15 +55,6 @@
 				<version>2.4</version>
 				<configuration>
 					<skip>true</skip>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.4.3</version>
-				<configuration>
-					<skip>true</skip>
-					<skipTests>true</skipTests>
 				</configuration>
 			</plugin>
 		</plugins>
