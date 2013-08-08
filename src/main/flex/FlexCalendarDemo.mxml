@@ -1,19 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:Application name="flexCalendarSample" xmlns:fx="http://ns.adobe.com/mxml/2009"
-		  xmlns:s="library://ns.adobe.com/flex/spark" 
-		  xmlns:mx="library://ns.adobe.com/flex/mx"
-		  xmlns:flexcalendar="com.flexcalendar.components.calendar.*"
-		  xmlns:widgets="com.flexcalendar.components.calendar.widgets.*"
-		  xmlns:sample="com.flexcalendar.demo.*"
-			backgroundColor="0xffffff"
-			minHeight="500" minWidth="700"
-			applicationComplete="completeHandler();">
-	<fx:Declarations>
-		<!-- Place non-visual elements (e.g., services, value objects) here -->
-	</fx:Declarations>
-
-    <!--&lt;!&ndash; remove this line for Flash Builder &ndash;&gt;-->
-	<!--<fx:Style source="../../../../../calendar/src/main/flex4/defaults.css"/>-->
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   xmlns:fc="http://flex-calendar.com/ns"
+			   backgroundColor="0xffffff"
+			   minHeight="500" minWidth="700"
+			   applicationComplete="completeHandler();">
 
 	<fx:Style>
 		@namespace flexcalendar "com.flexcalendar.components.calendar.*";
@@ -59,15 +51,12 @@
 	
 	<fx:Script>
 		<![CDATA[
-		import com.flexcalendar.components.calendar.core.dataModel.CalendarDataProvider;
-		import com.flexcalendar.components.calendar.core.dataModel.CalendarDataProvider;
-		import com.flexcalendar.components.calendar.core.dataModel.ICalendarDataProvider;
-
-		import com.flexcalendar.components.calendar.editor.baloon.BaloonItemEditor;
 		import com.flexcalendar.components.calendar.core.DateRange;
-
+		import com.flexcalendar.components.calendar.core.dataModel.CalendarDataProvider;
 		import com.flexcalendar.components.calendar.displayClasses.renderers.defaults.DefaultCalendarDayViewItemRenderer;
+		import com.flexcalendar.components.calendar.displayClasses.renderers.modern.ModernCalendarDayViewItemRenderer;
 		import com.flexcalendar.components.calendar.editor.baloon.BaloonItemEditor;
+		import com.flexcalendar.components.calendar.events.AlarmEvent;
 		import com.flexcalendar.components.calendar.events.CalendarItemAddedEvent;
 		import com.flexcalendar.components.calendar.events.CalendarItemModificationEvent;
 		import com.flexcalendar.components.calendar.events.CalendarItemRemovedEvent;
@@ -75,14 +64,11 @@
 		import com.flexcalendar.components.calendar.events.CalendarMouseEvent;
 		import com.flexcalendar.components.calendar.events.GetEventsForDateRangeErrorEvent;
 		import com.flexcalendar.components.calendar.events.GetEventsForDateRangeSuccessEvent;
-		import com.flexcalendar.demo.DataProviderBuilder;
 		import com.flexcalendar.components.calendar.utils.CalendarMode;
 		import com.flexcalendar.components.calendar.utils.DateUtils;
-		import com.flexcalendar.components.calendar.displayClasses.renderers.modern.ModernCalendarDayViewItemRenderer;
-		import com.flexcalendar.components.calendar.events.AlarmEvent;
+		import com.flexcalendar.demo.DataProviderBuilder;
 
 		import mx.events.CalendarLayoutChangeEvent;
-
 
 		public var dataProviderBuilder:DataProviderBuilder;
 		[Bindable]
@@ -280,7 +266,6 @@
 				flexCalendar.monthViewContainer.monthViewGrid.styleName = "modernMonthViewGrid";
 				flexCalendar.calendarDayViewContainer.dayViewGrid.styleName = "modernDayViewGrid";
 				flexCalendar.calendarDayViewContainer.dayScrollBar.styleName = "modernScrollBar";
-
 				flexCalendar.calendarDayViewItemRenderer = ModernCalendarDayViewItemRenderer;
 
 			}
@@ -357,7 +342,7 @@
 					<mx:Button label="{resourceManager.getString('sampleApp','config.panel.heavyLoad')}" click="doHeavyLoad()"/>
 				</mx:VBox>
 				<mx:VBox label="{resourceManager.getString('sampleApp','config.panel.calendar.title')}" width="100%" styleName="configPanelVbox">
-					<widgets:CalendarsChooserWidget dataProvider="{dp}" width="100%" height="100%" editableLabels="false" showColorsPicker="false"/>
+					<fc:CalendarsChooserWidget dataProvider="{dp}" width="100%" height="100%" editableLabels="false" showColorsPicker="false"/>
 				</mx:VBox>
 				<mx:VBox label="{resourceManager.getString('sampleApp','config.panel.localization.title')}" width="100%" styleName="configPanelVbox">
 						<mx:Label text="{resourceManager.getString('sampleApp','config.panel.localization.choose')}"/>
@@ -369,7 +354,8 @@
 
 		</mx:VBox>
 
-		<flexcalendar:FlexCalendar id="flexCalendar" width="100%" height="100%" dataProvider="{dp}" scaleX="1" visibleRange="{visibleDateRange}"
+
+		<fc:FlexCalendar id="flexCalendar" width="100%" height="100%" dataProvider="{dp}" scaleX="1" visibleRange="{visibleDateRange}"
 								scaleY="1" itemEditor="{new BaloonItemEditor(flexCalendar, false, false, true, true, true)}"
 								calendarMode="{calendarMode}"
 								headerVisible="{hideCalendarHeader.selected}"
