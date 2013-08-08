@@ -1,7 +1,7 @@
 package com.flexcalendar.demo
 {
 import com.flexcalendar.components.calendar.core.DateRange;
-import com.flexcalendar.components.calendar.core.dataModel.CalendarItemSet;
+import com.flexcalendar.components.calendar.core.dataModel.BaseRemoteCalendarItemSet;
 import com.flexcalendar.components.calendar.displayClasses.decoration.IRendererColors;
 import com.flexcalendar.components.calendar.events.CalendarItemAddedEvent;
 import com.flexcalendar.components.calendar.events.CalendarItemModificationEvent;
@@ -10,14 +10,15 @@ import com.flexcalendar.components.calendar.events.GetEventsForDateRangeSuccessE
 
 import flash.utils.setTimeout;
 
-public class ExampleRemoteCalendarItemSet extends CalendarItemSet
+public class ExampleRemoteCalendarItemSet extends BaseRemoteCalendarItemSet
 {
-	public function ExampleRemoteCalendarItemSet(readOnly:Boolean = false, name:String = null, itemSetColors:IRendererColors = null)
+	public function ExampleRemoteCalendarItemSet(readOnly:Boolean = false, name:String = null,
+			itemSetColors:IRendererColors = null)
 	{
 		super(readOnly, name, itemSetColors);
 	}
 
-	public function getEventsForDateRangeAsync(dateRange:DateRange, requestTimeStamp:Date):void
+	override public function getEventsForDateRangeAsync(dateRange:DateRange, requestTimeStamp:Date):void
 	{
 		// inform component that background processing is taking place in this CalendarItemSet.
 		backgroundProcessing = true;
