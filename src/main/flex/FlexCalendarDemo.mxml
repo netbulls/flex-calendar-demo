@@ -236,7 +236,7 @@
 				dataProviderBuilder.addWorkingHours(dp.getItemSetAt(0), 0);
 				dataProviderBuilder.addWorkingHours(dp.getItemSetAt(1), 1);
 				dataProviderBuilder.addWorkingHours(dp.getItemSetAt(2), 2);
-				flexCalendar.calendarDayViewContainer.dayViewGrid.setStyle("backgroundColor", 0xdedede);
+				flexCalendar.calendarDayViewContainer.dayViewGrid.setStyle("backgroundColor", 0xffeeee);
 			}
 			else
 			{
@@ -257,6 +257,12 @@
 		{
 			flexCalendar.columnModeEnabled = columnModeCheckBox.selected;
 			flexCalendar.refresh();
+		}
+
+
+		private function dragColumnsClicked():void
+		{
+			flexCalendar.dragBetweenColumnsEnabled = dragColumnCheckBox.selected;
 		}
 
 		public function doHeavyLoad():void
@@ -381,6 +387,10 @@
 					<mx:CheckBox id="columnModeCheckBox"
 								 label="{resourceManager.getString('sampleApp','config.panel.pro.column.label')}"
 								 click="columnModeClicked()" selected="false"/>
+					<mx:CheckBox id="dragColumnCheckBox"
+								 label="{resourceManager.getString('sampleApp','config.panel.pro.column.drag.label')}"
+								 click="dragColumnsClicked()" selected="false" enabled="{columnModeCheckBox.selected}}"/>
+					<mx:Label text="{flexCalendar.dragBetweenColumnsEnabled}"/>
 				</mx:VBox>
 				<mx:VBox label="{resourceManager.getString('sampleApp','config.panel.performance.title')}" width="100%"
 						 styleName="configPanelVbox">
