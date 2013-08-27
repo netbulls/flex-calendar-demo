@@ -435,7 +435,7 @@
 						 calendarMouseClick="trace('calendarMouseClick')"
 						 calendarMouseDoubleClick="trace('calendarMouseDoubleClick')"
 						 calendarRendererMouseClick="trace('calendarRendererMouseClick')"
-						 editableCalendarRendererMouseClick="trace('editableCalendarRendererMouseClick')"
+						 readonlyCalendarRendererMouseClick="trace('readonlyCalendarRendererMouseClick')"
 						 calendarRendererMouseDoubleClick="trace('calendarRendererMouseDoubleClick')"
 						 calendarSpaceRendererMouseClick="trace('calendarSpaceRendererMouseClick')"
 						 calendarSpaceRendererMouseDoubleClick="trace('calendarSpaceRendererMouseDoubleClick')"

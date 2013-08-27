@@ -179,6 +179,17 @@ public class DataProviderBuilder
 		itemSet2.name = "Dupa";
 		builtDp.addItemSet(itemSet2);
 
+		var stringRecur:String = "FREQ=DAILY;INTERVAL=3";
+		var recur:Recur = new Recur(stringRecur, new DateOptions());
+
+		var item:CalendarItem = buildItemWithDay(1, 10, 14, "Recuring item", false,
+						RendererColorsFactory.buildColorsWithGradient(RendererColors.ORANGE));
+
+		item.recur = recur;
+
+		itemSet2.addItem(item);
+		itemSet2.readOnly = true;
+
 		return builtDp;
 
 	}
