@@ -7,7 +7,7 @@
 	<description>Flex Calendar Demo</description>
 	<groupId>com.flex-calendar</groupId>
 	<artifactId>flex-calendar-demo</artifactId>
-	<version>2.0.0-beta4-SNAPSHOT</version>
+	<version>2.0.0-beta4</version>
 	<packaging>swf</packaging>
 
 	<properties>
@@ -70,7 +70,7 @@
 		<dependency>
 			<groupId>com.flex-calendar</groupId>
 			<artifactId>flex-calendar-component</artifactId>
-			<version>2.0.0-beta3</version>
+			<version>2.0.0-beta4</version>
 			<type>swc</type>
 		</dependency>
 	</dependencies>
