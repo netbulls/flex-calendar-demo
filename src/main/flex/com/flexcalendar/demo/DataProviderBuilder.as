@@ -176,7 +176,7 @@ public class DataProviderBuilder
 		builtDp.addItemSet(itemSet);
 
 		var itemSet2:CalendarItemSet = new CalendarItemSet();
-		itemSet2.name = "Dupa";
+		itemSet2.name = "Test calendar";
 		builtDp.addItemSet(itemSet2);
 
 		var stringRecur:String = "FREQ=DAILY;INTERVAL=3";
