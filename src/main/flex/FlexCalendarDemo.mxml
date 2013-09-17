@@ -23,14 +23,6 @@
 			backgroundType: "solid";
 		}
 
-		defaultRenderers|DefaultCalendarDayViewUnavailableSpaceRenderer {
-			rendererAlpha: 1;
-			backgroundColor: #dedede;
-			headerBackgroundColor: #dedede;
-			borderColor: #ffffff;
-			backgroundType: "solid";
-		}
-
 		.flexCalendarExcessIndicator {
 			color: #CC0000;
 			fontStyle: italic;
