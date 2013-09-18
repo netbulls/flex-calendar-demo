@@ -183,7 +183,7 @@ public class DataProviderBuilder
 		var recur:Recur = new Recur(stringRecur, new DateOptions());
 
 		var item:CalendarItem = buildItemWithDay(1, 10, 14, "Recuring item", false,
-						RendererColorsFactory.buildColorsWithGradient(RendererColors.ORANGE));
+				RendererColorsFactory.buildColorsWithGradient(RendererColors.ORANGE));
 
 		item.recur = recur;
 
@@ -194,14 +194,9 @@ public class DataProviderBuilder
 
 	}
 
-	private function buildItem(startTime:Number, endTime:Number, summary:String, readOnly:Boolean = false,
+	public function buildItem(start:Date, end:Date, summary:String, readOnly:Boolean = false,
 			rendererColors:IRendererColors = null):CalendarItem
 	{
-		var today:Date = DateUtils.startOfDay(new Date());
-		var start:Date = new Date();
-		start.time = today.time + startTime * DateUtils.MILLI_IN_HOUR;
-		var end:Date = new Date();
-		end.time = today.time + endTime * DateUtils.MILLI_IN_HOUR;
 		return new CalendarItem(start, end, summary, null, readOnly, rendererColors);
 	}
 

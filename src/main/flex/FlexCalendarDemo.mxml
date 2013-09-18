@@ -45,10 +45,14 @@
 		<![CDATA[
 		import com.flexcalendar.components.calendar.core.DateRange;
 		import com.flexcalendar.components.calendar.core.dataModel.CalendarDataProvider;
+		import com.flexcalendar.components.calendar.core.dataModel.CalendarItem;
+		import com.flexcalendar.components.calendar.core.dataModel.ICalendarItemSet;
+		import com.flexcalendar.components.calendar.displayClasses.headers.DayViewHeader;
 		import com.flexcalendar.components.calendar.displayClasses.renderers.defaults.DefaultCalendarDayViewItemRenderer;
 		import com.flexcalendar.components.calendar.displayClasses.renderers.modern.ModernCalendarDayViewItemRenderer;
 		import com.flexcalendar.components.calendar.editor.baloon.BaloonItemEditor;
 		import com.flexcalendar.components.calendar.events.AlarmEvent;
+		import com.flexcalendar.components.calendar.events.CalendarDragEvent;
 		import com.flexcalendar.components.calendar.events.CalendarItemAddedEvent;
 		import com.flexcalendar.components.calendar.events.CalendarItemModificationEvent;
 		import com.flexcalendar.components.calendar.events.CalendarItemRemovedEvent;
@@ -58,9 +62,13 @@
 		import com.flexcalendar.components.calendar.events.GetEventsForDateRangeSuccessEvent;
 		import com.flexcalendar.components.calendar.utils.CalendarMode;
 		import com.flexcalendar.components.calendar.utils.DateUtils;
+		import com.flexcalendar.components.calendar.utils.ItemDetails;
 		import com.flexcalendar.demo.DataProviderBuilder;
 
 		import mx.events.CalendarLayoutChangeEvent;
+		import mx.utils.StringUtil;
+
+		import spark.components.List;
 
 		public var dataProviderBuilder:DataProviderBuilder;
 		[Bindable]
@@ -257,6 +265,11 @@
 			flexCalendar.dragBetweenColumnsEnabled = dragColumnCheckBox.selected;
 		}
 
+		private function dropUIComponentsClicked():void
+		{
+			flexCalendar.dropUiComponentsEnabled = dropComponentsCheckBox.selected;
+		}
+
 		public function doHeavyLoad():void
 		{
 			dataProviderBuilder.populateHeavyLoad(dp.getItemSetAt(0), 100);
@@ -315,6 +328,34 @@
 		private function calendarItemSetMetadataUpdatedEvent(event:CalendarItemSetMetadataUpdatedEvent):void
 		{
 			trace("CalendarItemSetMetadataUpdatedEvent");
+		}
+
+		private function calendarDropEvent(event:CalendarDragEvent):void
+		{
+			trace(StringUtil.substitute("calendarDropEvent availableSpace: {0}", event.isAvailableSpace));
+			var start:Date = new Date(event.targetDate);
+			var end:Date = new Date(event.targetDate);
+			if (event.renderersContainer is DayViewHeader)
+				end.date += 1;
+			else
+				end.minutes += 30;
+			var patientName:String = (event.event.dragInitiator as List).selectedItem;
+
+			var item:CalendarItem = dataProviderBuilder.buildItem(start, end, "Meeting with " + patientName);
+			var calendarItemSet:ICalendarItemSet = event.calendarItemSet;
+
+			if (calendarItemSet == null)
+			{
+				flexCalendar.itemEditor.dropHandler(event, item);
+			}
+			else
+			{
+				if (event.isAvailableSpace)
+				{
+					calendarItemSet.addItem(item);
+					flexCalendar.updateItemDetails(new ItemDetails(calendarItemSet, item));
+				}
+			}
 		}
 		]]>
 	</fx:Script>
@@ -382,7 +423,9 @@
 					<mx:CheckBox id="dragColumnCheckBox"
 								 label="{resourceManager.getString('sampleApp','config.panel.pro.column.drag.label')}"
 								 click="dragColumnsClicked()" selected="false" enabled="{columnModeCheckBox.selected}}"/>
-					<mx:Label text="{flexCalendar.dragBetweenColumnsEnabled}"/>
+					<mx:CheckBox id="dropComponentsCheckBox"
+								 label="{resourceManager.getString('sampleApp','config.panel.pro.drop.checkbox')}"
+								 click="dropUIComponentsClicked()" selected="false"/>
 				</mx:VBox>
 				<mx:VBox label="{resourceManager.getString('sampleApp','config.panel.performance.title')}" width="100%"
 						 styleName="configPanelVbox">
@@ -404,6 +447,18 @@
 			<s:Button label="Test recur" click="dataProviderBuilder.testRecur()"/>
 			<s:Label text="Loading data..." includeInLayout="{flexCalendar.backgroundProcessing}"
 					 visible="{flexCalendar.backgroundProcessing}"/>
+
+			<s:Label text="{resourceManager.getString('sampleApp','config.panel.pro.drop.help')}"/>
+			<s:Label text="{resourceManager.getString('sampleApp','config.panel.pro.drop.enable')}"
+					 visible="{!flexCalendar.dropUiComponentsEnabled}"
+					 includeInLayout="{!flexCalendar.dropUiComponentsEnabled}"/>
+			<s:List dragMoveEnabled="true" dragEnabled="true" width="100%">
+				<mx:ArrayCollection>
+					<fx:String>John Mark</fx:String>
+					<fx:String>Bill Ericsson</fx:String>
+					<fx:String>Mary Jane</fx:String>
+				</mx:ArrayCollection>
+			</s:List>
 
 		</mx:VBox>
 
@@ -437,6 +492,7 @@
 						 visibleHoursLimited="{visibleHoursRangeChckbox.selected}"
 						 granularityMinutes="{selectedMinute}"
 						 calendarAlarmEvent="calendarAlarmEvent(event)"
+						 calendarDropEvent="calendarDropEvent(event)"
 
 						 cacheTimeToLive="{DateUtils.MILLI_IN_SECOND * 30}"
 				/>
