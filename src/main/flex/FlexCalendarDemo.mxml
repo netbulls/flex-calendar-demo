@@ -49,7 +49,9 @@
 		import com.flexcalendar.components.calendar.core.dataModel.ICalendarItemSet;
 		import com.flexcalendar.components.calendar.displayClasses.headers.DayViewHeader;
 		import com.flexcalendar.components.calendar.displayClasses.renderers.defaults.DefaultCalendarDayViewItemRenderer;
+		import com.flexcalendar.components.calendar.displayClasses.renderers.defaults.DefaultCalendarDayViewLongItemRenderer;
 		import com.flexcalendar.components.calendar.displayClasses.renderers.modern.ModernCalendarDayViewItemRenderer;
+		import com.flexcalendar.components.calendar.displayClasses.renderers.modern.ModernCalendarDayViewLongItemRenderer;
 		import com.flexcalendar.components.calendar.editor.baloon.BaloonItemEditor;
 		import com.flexcalendar.components.calendar.events.AlarmEvent;
 		import com.flexcalendar.components.calendar.events.CalendarDragEvent;
@@ -102,6 +104,7 @@
 			DateUtils.addDays(endRange, 0 - today.day + 6);
 
 			visibleDateRange = new DateRange(startRange, endRange);
+			setModernStyle();
 		}
 
 
@@ -281,36 +284,11 @@
 		{
 			if (calendarStylesComboBox.selectedItem === "modern")
 			{
-				flexCalendar.setStyle("headerHeight", 45);
-
-				flexCalendar.calendarHeader.styleName = "modern";
-				flexCalendar.calendarDayViewContainer.styleName = "modern";
-				flexCalendar.monthViewContainer.styleName = "modern";
-				flexCalendar.calendarDayViewContainer.dayViewHeader.styleName = "modern";
-				flexCalendar.monthViewContainer.monthViewHeader.styleName = "modern";
-				flexCalendar.monthViewContainer.monthViewGrid.styleName = "modern";
-				flexCalendar.calendarDayViewContainer.columnsHeader.styleName = "modern";
-				flexCalendar.calendarDayViewContainer.dayViewGrid.styleName = "modern";
-				flexCalendar.calendarDayViewContainer.dayScrollBar.styleName = "modern";
-
-				flexCalendar.calendarDayViewItemRenderer = ModernCalendarDayViewItemRenderer;
-
+				setModernStyle();
 			}
 			else
 			{
-				flexCalendar.setStyle("headerHeight", 34);
-
-				flexCalendar.calendarHeader.styleName = undefined;
-				flexCalendar.calendarDayViewContainer.styleName = undefined;
-				flexCalendar.monthViewContainer.styleName = undefined;
-				flexCalendar.calendarDayViewContainer.dayViewHeader.styleName = undefined;
-				flexCalendar.monthViewContainer.monthViewHeader.styleName = undefined;
-				flexCalendar.monthViewContainer.monthViewGrid.styleName = undefined;
-				flexCalendar.calendarDayViewContainer.columnsHeader.styleName = undefined;
-				flexCalendar.calendarDayViewContainer.dayViewGrid.styleName = undefined;
-				flexCalendar.calendarDayViewContainer.dayScrollBar.styleName = undefined;
-
-				flexCalendar.calendarDayViewItemRenderer = DefaultCalendarDayViewItemRenderer;
+				setDefaultStyle();
 			}
 			flexCalendar.refresh();
 		}
@@ -357,6 +335,43 @@
 				}
 			}
 		}
+
+		private function setModernStyle():void
+		{
+			flexCalendar.setStyle("headerHeight", 45);
+
+			flexCalendar.calendarHeader.styleName = "modern";
+			flexCalendar.calendarDayViewContainer.styleName = "modern";
+			flexCalendar.monthViewContainer.styleName = "modern";
+			flexCalendar.calendarDayViewContainer.dayViewHeader.styleName = "modern";
+			flexCalendar.monthViewContainer.monthViewHeader.styleName = "modern";
+			flexCalendar.monthViewContainer.monthViewGrid.styleName = "modern";
+			flexCalendar.calendarDayViewContainer.columnsHeader.styleName = "modern";
+			flexCalendar.calendarDayViewContainer.dayViewGrid.styleName = "modern";
+			flexCalendar.calendarDayViewContainer.dayScrollBar.styleName = "modern";
+
+			flexCalendar.calendarDayViewLongItemRenderer = ModernCalendarDayViewLongItemRenderer;
+			flexCalendar.calendarDayViewItemRenderer = ModernCalendarDayViewItemRenderer;
+		}
+
+		private function setDefaultStyle():void
+		{
+			flexCalendar.setStyle("headerHeight", 34);
+
+			flexCalendar.calendarHeader.styleName = undefined;
+			flexCalendar.calendarDayViewContainer.styleName = undefined;
+			flexCalendar.monthViewContainer.styleName = undefined;
+			flexCalendar.calendarDayViewContainer.dayViewHeader.styleName = undefined;
+			flexCalendar.monthViewContainer.monthViewHeader.styleName = undefined;
+			flexCalendar.monthViewContainer.monthViewGrid.styleName = undefined;
+			flexCalendar.calendarDayViewContainer.columnsHeader.styleName = undefined;
+			flexCalendar.calendarDayViewContainer.dayViewGrid.styleName = undefined;
+			flexCalendar.calendarDayViewContainer.dayScrollBar.styleName = undefined;
+			flexCalendar.calendarDayViewLongItemRenderer.styleName = undefined;
+
+			flexCalendar.calendarDayViewLongItemRenderer = DefaultCalendarDayViewLongItemRenderer;
+			flexCalendar.calendarDayViewItemRenderer = DefaultCalendarDayViewItemRenderer;
+		}
 		]]>
 	</fx:Script>
 
@@ -394,7 +409,7 @@
 					<mx:ComboBox id="granularityMinutesComboBox" dataProvider="{minutes}" selectedItem="{30}"
 								 change="granularityMinutesChanged()"/>
 					<mx:Label text="{resourceManager.getString('sampleApp','config.panel.style.choose')}"/>
-					<mx:ComboBox id="calendarStylesComboBox" dataProvider="{calendarStyles}" selectedItem="default"
+					<mx:ComboBox id="calendarStylesComboBox" dataProvider="{calendarStyles}" selectedItem="modern"
 								 change="calendarStyleChanged()"/>
 				</mx:VBox>
 				<mx:VBox label="{resourceManager.getString('sampleApp','config.panel.pro.title')}" width="100%"
