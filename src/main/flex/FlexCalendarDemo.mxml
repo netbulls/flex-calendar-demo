@@ -69,6 +69,7 @@
 
 		import mx.events.CalendarLayoutChangeEvent;
 		import mx.utils.StringUtil;
+		import mx.utils.URLUtil;
 
 		import spark.components.List;
 
@@ -105,6 +106,12 @@
 
 			visibleDateRange = new DateRange(startRange, endRange);
 			setModernStyle();
+
+			// display holidays
+			holidaysClicked();
+
+			columnModeCheckBox.selected = true;
+			columnModeClicked();
 		}
 
 
@@ -170,14 +177,14 @@
 		[Bindable]
 		private var defaultLocale:Object;
 		[Bindable]
-		private var calendarMode:int = CalendarMode.FREE_EDIT_MODE;
+		private var calendarMode:int = CalendarMode.LIMITED_EDIT_MODE;
 		[Bindable]
 		private var calendarStyles:Array = ["default", "modern"];
 
-		private function localeComboChangeHandler():void
-		{
-			resourceManager.localeChain = [ localeComboBox.selectedItem, "en_US"];
-		}
+//		private function localeComboChangeHandler():void
+//		{
+//			resourceManager.localeChain = [ localeComboBox.selectedItem, "en_US"];
+//		}
 
 		private function granularityMinutesChanged():void
 		{
@@ -203,11 +210,6 @@
 			if (limitedEditModeChckbox.selected)
 			{
 				calendarMode = CalendarMode.LIMITED_EDIT_MODE;
-				if (!workingHoursChckbox.selected)
-				{
-					workingHoursChckbox.selected = true;
-					workingHoursClicked();
-				}
 			}
 			else
 			{
@@ -221,32 +223,13 @@
 			{
 				dataProviderBuilder.addHolidays(dp.getItemSetAt(0), 0);
 				dataProviderBuilder.addHolidays(dp.getItemSetAt(1), 1);
-				dataProviderBuilder.addHolidays(dp.getItemSetAt(2), 2);
+//				dataProviderBuilder.addHolidays(dp.getItemSetAt(2), 2);
 			}
 			else
 			{
 				dataProviderBuilder.removeHolidays(dp.getItemSetAt(0));
 				dataProviderBuilder.removeHolidays(dp.getItemSetAt(1));
-				dataProviderBuilder.removeHolidays(dp.getItemSetAt(2));
-			}
-			flexCalendar.refresh();
-		}
-
-		private function workingHoursClicked():void
-		{
-			if (workingHoursChckbox.selected)
-			{
-				dataProviderBuilder.addWorkingHours(dp.getItemSetAt(0), 0);
-				dataProviderBuilder.addWorkingHours(dp.getItemSetAt(1), 1);
-				dataProviderBuilder.addWorkingHours(dp.getItemSetAt(2), 2);
-				flexCalendar.calendarDayViewContainer.dayViewGrid.setStyle("backgroundColor", 0xffeeee);
-			}
-			else
-			{
-				dataProviderBuilder.removeWorkingHours(dp.getItemSetAt(0));
-				dataProviderBuilder.removeWorkingHours(dp.getItemSetAt(1));
-				dataProviderBuilder.removeWorkingHours(dp.getItemSetAt(2));
-				flexCalendar.calendarDayViewContainer.dayViewGrid.setStyle("backgroundColor", 0xffffff);
+//				dataProviderBuilder.removeHolidays(dp.getItemSetAt(2));
 			}
 			flexCalendar.refresh();
 		}
@@ -416,13 +399,10 @@
 						 styleName="configPanelVbox">
 					<mx:CheckBox id="limitedEditModeChckbox"
 								 label="{resourceManager.getString('sampleApp','config.panel.pro.limited.checkbox')}"
-								 click="limitedEditModeClicked()" selected="false"/>
+								 click="limitedEditModeClicked()" selected="true"/>
 					<mx:CheckBox id="holidaysChckbox"
 								 label="{resourceManager.getString('sampleApp','config.panel.pro.holidays.checkbox')}"
-								 click="holidaysClicked()" selected="false"/>
-					<mx:CheckBox id="workingHoursChckbox"
-								 label="{resourceManager.getString('sampleApp','config.panel.pro.workinghours.checkbox')}"
-								 click="workingHoursClicked()" selected="false"/>
+								 click="holidaysClicked()" selected="true"/>
 					<mx:CheckBox id="visibleHoursRangeChckbox"
 								 label="{resourceManager.getString('sampleApp','config.panel.visiblyHoursRange.label')}"
 								 click="visibleHoursRangeClicked()" selected="false"/>
@@ -433,14 +413,14 @@
 								includeInLayout="{visibleHoursRangeChckbox.selected}" minimum="1" maximum="24" snapInterval="1"
 								value="17" labels="['0','3','6','9','12','15','18','21','24']"/>
 					<mx:CheckBox id="columnModeCheckBox"
-								 label="{resourceManager.getString('sampleApp','config.panel.pro.column.label')}"
+								 label="{resourceManager.getString('sampleApp','config.panel.pro.column.label')}" color="0x07A400"
 								 click="columnModeClicked()" selected="false"/>
 					<mx:CheckBox id="dragColumnCheckBox"
-								 label="{resourceManager.getString('sampleApp','config.panel.pro.column.drag.label')}"
+								 label="{resourceManager.getString('sampleApp','config.panel.pro.column.drag.label')}" color="0x07A400"
 								 click="dragColumnsClicked()" selected="false" enabled="{columnModeCheckBox.selected}}"/>
 					<mx:CheckBox id="dropComponentsCheckBox"
-								 label="{resourceManager.getString('sampleApp','config.panel.pro.drop.checkbox')}"
-								 click="dropUIComponentsClicked()" selected="false"/>
+								 label="{resourceManager.getString('sampleApp','config.panel.pro.drop.checkbox')}" color="0x07A400"
+								 click="dropUIComponentsClicked()" selected="true"/>
 				</mx:VBox>
 				<mx:VBox label="{resourceManager.getString('sampleApp','config.panel.performance.title')}" width="100%"
 						 styleName="configPanelVbox">
@@ -450,20 +430,19 @@
 				<mx:VBox label="{resourceManager.getString('sampleApp','config.panel.calendar.title')}" width="100%"
 						 styleName="configPanelVbox">
 					<fc:CalendarsChooserWidget dataProvider="{dp}" width="100%" height="100%" editableLabels="false"
-											   showColorsPicker="false"/>
+											   showColorsPicker="true"/>
 				</mx:VBox>
-				<mx:VBox label="{resourceManager.getString('sampleApp','config.panel.localization.title')}" width="100%"
-						 styleName="configPanelVbox">
-					<mx:Label text="{resourceManager.getString('sampleApp','config.panel.localization.choose')}"/>
-					<mx:ComboBox id="localeComboBox" dataProvider="{locales}" change="localeComboChangeHandler()"
-								 selectedItem="{defaultLocale}"/>
-				</mx:VBox>
+				<!--<mx:VBox label="{resourceManager.getString('sampleApp','config.panel.localization.title')}" width="100%"-->
+						 <!--styleName="configPanelVbox">-->
+					<!--<mx:Label text="{resourceManager.getString('sampleApp','config.panel.localization.choose')}"/>-->
+					<!--<mx:ComboBox id="localeComboBox" dataProvider="{locales}" change="localeComboChangeHandler()"-->
+								 <!--selectedItem="{defaultLocale}"/>-->
+				<!--</mx:VBox>-->
 			</mx:Accordion>
-			<s:Button label="Test recur" click="dataProviderBuilder.testRecur()"/>
 			<s:Label text="Loading data..." includeInLayout="{flexCalendar.backgroundProcessing}"
 					 visible="{flexCalendar.backgroundProcessing}"/>
 
-			<s:Label text="{resourceManager.getString('sampleApp','config.panel.pro.drop.help')}"/>
+			<s:Label text="{resourceManager.getString('sampleApp','config.panel.pro.drop.help')}" color="0x07A400"/>
 			<s:Label text="{resourceManager.getString('sampleApp','config.panel.pro.drop.enable')}"
 					 visible="{!flexCalendar.dropUiComponentsEnabled}"
 					 includeInLayout="{!flexCalendar.dropUiComponentsEnabled}"/>
@@ -493,6 +472,7 @@
 						 calendarItemSetMetadataUpdatedEvent="calendarItemSetMetadataUpdatedEvent(event)"
 
 						 availableSpaceIsMoreImportantThanUnavailableSpace="true"
+						 acceptItemsInLimitedEditModeAlwaysButInUnavailableSpace="true"
 
 						 calendarMouseClick="trace('calendarMouseClick')"
 						 calendarMouseDoubleClick="trace('calendarMouseDoubleClick')"
@@ -508,6 +488,8 @@
 						 granularityMinutes="{selectedMinute}"
 						 calendarAlarmEvent="calendarAlarmEvent(event)"
 						 calendarDropEvent="calendarDropEvent(event)"
+
+						 dropUiComponentsEnabled="true"
 
 						 cacheTimeToLive="{DateUtils.MILLI_IN_SECOND * 30}"
 				/>

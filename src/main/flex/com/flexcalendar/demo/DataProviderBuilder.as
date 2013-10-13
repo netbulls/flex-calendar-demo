@@ -35,19 +35,36 @@ public class DataProviderBuilder
 		switch (exampleSet)
 		{
 			case 0:
-				itemSet.addItem(setItemAsReadonlySpace(buildItemWithDay(0, 0, 24, "Holiday", false,
-						RendererColorsFactory.buildColors(RendererColors.GRAY)), ItemType.UNAVAILABLE_SPACE));
-				itemSet.addItem(setItemAsReadonlySpace(buildItemWithDay(6, 0, 24, "Holiday", false,
-						RendererColorsFactory.buildColors(RendererColors.GRAY)), ItemType.UNAVAILABLE_SPACE));
-				break;
 			case 1:
-				itemSet.addItem(setItemAsReadonlySpace(buildItemWithDay(1, 0, 24, "Holiday", false,
+				itemSet.addItem(setItemAsReadonlySpace(buildItemWithDay(0, 0, 24, "", false,
 						RendererColorsFactory.buildColors(RendererColors.GRAY)), ItemType.UNAVAILABLE_SPACE));
-				itemSet.addItem(setItemAsReadonlySpace(buildItemWithDay(2, 0, 24, "Holiday", false,
+
+				itemSet.addItem(setItemAsReadonlySpace(buildItemWithDay(1, 0, 6.99, "", false,
 						RendererColorsFactory.buildColors(RendererColors.GRAY)), ItemType.UNAVAILABLE_SPACE));
-				break;
-			case 2:
-				itemSet.addItem(setItemAsReadonlySpace(buildItemWithDay(4, 0, 24, "Holiday", false,
+				itemSet.addItem(setItemAsReadonlySpace(buildItemWithDay(1, 18.01, 24, "", false,
+						RendererColorsFactory.buildColors(RendererColors.GRAY)), ItemType.UNAVAILABLE_SPACE));
+
+				itemSet.addItem(setItemAsReadonlySpace(buildItemWithDay(2, 0, 6.99, "", false,
+						RendererColorsFactory.buildColors(RendererColors.GRAY)), ItemType.UNAVAILABLE_SPACE));
+				itemSet.addItem(setItemAsReadonlySpace(buildItemWithDay(2, 18.01, 24, "", false,
+						RendererColorsFactory.buildColors(RendererColors.GRAY)), ItemType.UNAVAILABLE_SPACE));
+
+				itemSet.addItem(setItemAsReadonlySpace(buildItemWithDay(3, 0, 6.99, "", false,
+						RendererColorsFactory.buildColors(RendererColors.GRAY)), ItemType.UNAVAILABLE_SPACE));
+				itemSet.addItem(setItemAsReadonlySpace(buildItemWithDay(3, 18.01, 24, "", false,
+						RendererColorsFactory.buildColors(RendererColors.GRAY)), ItemType.UNAVAILABLE_SPACE));
+
+				itemSet.addItem(setItemAsReadonlySpace(buildItemWithDay(4, 0, 6.99, "", false,
+						RendererColorsFactory.buildColors(RendererColors.GRAY)), ItemType.UNAVAILABLE_SPACE));
+				itemSet.addItem(setItemAsReadonlySpace(buildItemWithDay(4, 18.01, 24, "", false,
+						RendererColorsFactory.buildColors(RendererColors.GRAY)), ItemType.UNAVAILABLE_SPACE));
+
+				itemSet.addItem(setItemAsReadonlySpace(buildItemWithDay(5, 0, 6.99, "", false,
+						RendererColorsFactory.buildColors(RendererColors.GRAY)), ItemType.UNAVAILABLE_SPACE));
+				itemSet.addItem(setItemAsReadonlySpace(buildItemWithDay(5, 18.01, 24, "", false,
+						RendererColorsFactory.buildColors(RendererColors.GRAY)), ItemType.UNAVAILABLE_SPACE));
+
+				itemSet.addItem(setItemAsReadonlySpace(buildItemWithDay(6, 0, 24, "", false,
 						RendererColorsFactory.buildColors(RendererColors.GRAY)), ItemType.UNAVAILABLE_SPACE));
 				break;
 		}
@@ -78,90 +95,25 @@ public class DataProviderBuilder
 		holidays.removeAll();
 	}
 
-	public function addWorkingHours(itemSet:ICalendarItemSet, exampeSet:int):void
-	{
-		switch (exampeSet)
-		{
-			case 0:
-				itemSet.addItem(setItemAsReadonlySpace(buildItemWithDay(1, 8, 16, "Available", false,
-						RendererColorsFactory.buildColors(RendererColors.WHITE)), ItemType.AVAILABLE_SPACE));
-				itemSet.addItem(setItemAsReadonlySpace(buildItemWithDay(2, 14, 22, "Available", false,
-						RendererColorsFactory.buildColors(RendererColors.WHITE)), ItemType.AVAILABLE_SPACE));
-				itemSet.addItem(setItemAsReadonlySpace(buildItemWithDay(3, 8, 16, "Available", false,
-						RendererColorsFactory.buildColors(RendererColors.WHITE)), ItemType.AVAILABLE_SPACE));
-				itemSet.addItem(setItemAsReadonlySpace(buildItemWithDay(4, 14, 22, "Available", false,
-						RendererColorsFactory.buildColors(RendererColors.WHITE)), ItemType.AVAILABLE_SPACE));
-				itemSet.addItem(setItemAsReadonlySpace(buildItemWithDay(5, 8, 16, "Available", false,
-						RendererColorsFactory.buildColors(RendererColors.WHITE)), ItemType.AVAILABLE_SPACE));
-				break;
-			case 1:
-				itemSet.addItem(setItemAsReadonlySpace(buildItemWithDay(1, 14, 22, "Available", false,
-						RendererColorsFactory.buildColors(RendererColors.WHITE)), ItemType.AVAILABLE_SPACE));
-				itemSet.addItem(setItemAsReadonlySpace(buildItemWithDay(2, 8, 16, "Available", false,
-						RendererColorsFactory.buildColors(RendererColors.WHITE)), ItemType.AVAILABLE_SPACE));
-				itemSet.addItem(setItemAsReadonlySpace(buildItemWithDay(3, 14, 22, "Available", false,
-						RendererColorsFactory.buildColors(RendererColors.WHITE)), ItemType.AVAILABLE_SPACE));
-				itemSet.addItem(setItemAsReadonlySpace(buildItemWithDay(4, 8, 16, "Available", false,
-						RendererColorsFactory.buildColors(RendererColors.WHITE)), ItemType.AVAILABLE_SPACE));
-				itemSet.addItem(setItemAsReadonlySpace(buildItemWithDay(5, 14, 22, "Available", false,
-						RendererColorsFactory.buildColors(RendererColors.WHITE)), ItemType.AVAILABLE_SPACE));
-				break;
-			case 2:
-				itemSet.addItem(setItemAsReadonlySpace(buildItemWithDay(1, 18, 20, "Available", false,
-						RendererColorsFactory.buildColors(RendererColors.WHITE)), ItemType.AVAILABLE_SPACE));
-				itemSet.addItem(setItemAsReadonlySpace(buildItemWithDay(3, 18, 20, "Available", false,
-						RendererColorsFactory.buildColors(RendererColors.WHITE)), ItemType.AVAILABLE_SPACE));
-				itemSet.addItem(setItemAsReadonlySpace(buildItemWithDay(5, 10, 20, "Available", false,
-						RendererColorsFactory.buildColors(RendererColors.WHITE)), ItemType.AVAILABLE_SPACE));
-		}
-
-	}
-
-	public function removeWorkingHours(itemSet:ICalendarItemSet):void
-	{
-		var workingHours:ArrayCollection = new ArrayCollection();
-
-		for each (var calendarItem:ICalendarItem in itemSet.calendarItems)
-		{
-			if (calendarItem.itemType == ItemType.AVAILABLE_SPACE)
-			{
-				workingHours.addItem(calendarItem);
-			}
-		}
-		for each (var workingHour:CalendarItem in workingHours)
-		{
-			itemSet.removeItem(workingHour);
-		}
-		workingHours.removeAll();
-	}
 
 	public function buildExampleDataProvider():CalendarDataProvider
 	{
 		var builtDp:CalendarDataProvider = new CalendarDataProvider();
 
 		var itemSet:CalendarItemSet = new ExampleRemoteCalendarItemSet();
-		itemSet.name = "Remote Calendar";
+		itemSet.name = "Dr Greg";
 
 		itemSet.addItem(buildItemWithDay(1, 8.5, 11, "Important meeting", false,
 				RendererColorsFactory.buildColorsWithGradient(RendererColors.RED), "Custom tooltip"));
-		itemSet.addItem(buildItemWithDay(1, 11.5, 12.5, "Lunch with Mark", false,
-				RendererColorsFactory.buildColorsWithGradient(RendererColors.YELLOW)));
+		itemSet.addItem(buildItemWithDay(1, 11.5, 12.5, "Lunch with Mark", false));
 
-		itemSet.addItem(buildItemWithDay(2, 9.5, 12.5, "<b>Negotions</b> with <u>ABCD</u>", false,
-				RendererColorsFactory.buildColorsWithGradient(RendererColors.LIGHT_BLUE)));
+		itemSet.addItem(buildItemWithDay(3, 13, 16, "Busy", false));
 
-		itemSet.addItem(buildItemWithDay(3, 13, 16, "Busy", false,
-				RendererColorsFactory.buildColorsWithGradient(RendererColors.VIOLET)));
-
-		itemSet.addItem(buildItemWithDay(4, 8, 13, "Strategy planning", false,
-				RendererColorsFactory.buildColorsWithGradient(RendererColors.ORANGE)));
+		itemSet.addItem(buildItemWithDay(4, 8, 13, "Strategy planning", false));
 
 		itemSet.addItem(buildItemWithDay(4, 14, 16, "Read only event", true));
 
-		itemSet.addItem(buildItemWithDay(5, 10, 16, "Ecology meeting", false,
-				RendererColorsFactory.buildColorsWithGradient(RendererColors.GREEN)));
-		itemSet.addItem(buildItemWithDay(5, 18, 19, "Consultation", false,
-				RendererColorsFactory.buildColorsWithGradient(RendererColors.BROWN)));
+		itemSet.addItem(buildItemWithDay(5, 16.5, 17.5, "Consultation", false));
 
 		itemSet.addItem(buildLongItem(1, 2, 0, 0, "I'm in Vancouver"));
 		itemSet.addItem(buildLongItem(-3, 5, 0, 0, "Final Exams at St. Mary's"));
@@ -169,26 +121,28 @@ public class DataProviderBuilder
 		builtDp.addItemSet(itemSet);
 
 		itemSet = new CalendarItemSet();
-		itemSet.name = "Laura's events(local)";
+		itemSet.name = "Dr Rob";
 		itemSet.itemSetColors = RendererColorsFactory.buildColorsWithGradient(RendererColors.GREEN);
-		itemSet.addItem(buildItemWithDay(4, 14, 16, "Read only event", false));
+		itemSet.addItem(buildItemWithDay(2, 9.5, 12.5, "<b>Negotions</b> with <u>ABCD</u>", false));
+		itemSet.addItem(buildItemWithDay(4, 14, 16, "Read only event", true));
+		itemSet.addItem(buildItemWithDay(5, 10, 16, "Ecology meeting", false));
 
 		builtDp.addItemSet(itemSet);
 
-		var itemSet2:CalendarItemSet = new CalendarItemSet();
-		itemSet2.name = "Test calendar";
-		builtDp.addItemSet(itemSet2);
+//		var itemSet2:CalendarItemSet = new CalendarItemSet();
+//		itemSet2.name = "Test calendar";
+//		builtDp.addItemSet(itemSet2);
 
-		var stringRecur:String = "FREQ=DAILY;INTERVAL=3";
-		var recur:Recur = new Recur(stringRecur, new DateOptions());
-
-		var item:CalendarItem = buildItemWithDay(1, 10, 14, "Recuring item", false,
-				RendererColorsFactory.buildColorsWithGradient(RendererColors.ORANGE));
-
-		item.recur = recur;
-
-		itemSet2.addItem(item);
-		itemSet2.readOnly = true;
+//		var stringRecur:String = "FREQ=DAILY;INTERVAL=3";
+//		var recur:Recur = new Recur(stringRecur, new DateOptions());
+//
+//		var item:CalendarItem = buildItemWithDay(1, 10, 14, "Recuring item", false,
+//				RendererColorsFactory.buildColorsWithGradient(RendererColors.ORANGE));
+//
+//		item.recur = recur;
+//
+//		itemSet2.addItem(item);
+//		itemSet2.readOnly = true;
 
 		return builtDp;
 

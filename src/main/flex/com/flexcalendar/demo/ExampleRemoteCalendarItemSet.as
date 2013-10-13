@@ -26,7 +26,7 @@ public class ExampleRemoteCalendarItemSet extends BaseRemoteCalendarItemSet
 		var calendarItems:Array = getEventsForRequestedPeriod(dateRange);
 
 		// simulate remote call processing
-		setTimeout(simulateResponseHandler, 500, calendarItems, dateRange, requestTimeStamp);
+		setTimeout(simulateResponseHandler, 0, calendarItems, dateRange, requestTimeStamp);
 	}
 
 	private function simulateResponseHandler(calendarItems:Array, dateRange:DateRange, requestTimeStamp:Date):void
