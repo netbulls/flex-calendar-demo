@@ -102,6 +102,7 @@ public class DataProviderBuilder
 
 		var itemSet:CalendarItemSet = new ExampleRemoteCalendarItemSet();
 		itemSet.name = "Dr Greg";
+		itemSet.itemSetColors = RendererColorsFactory.buildColorsWithGradient(RendererColors.LIGHT_BLUE);
 
 		itemSet.addItem(buildItemWithDay(1, 8.5, 11, "Important meeting", false,
 				RendererColorsFactory.buildColorsWithGradient(RendererColors.RED), "Custom tooltip"));
