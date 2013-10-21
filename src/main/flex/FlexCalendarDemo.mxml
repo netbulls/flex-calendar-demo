@@ -198,7 +198,10 @@
 			}
 			else
 			{
-				calendarMode = CalendarMode.FREE_EDIT_MODE;
+				if (limitedEditModeChckbox.selected)
+					calendarMode = CalendarMode.LIMITED_EDIT_MODE;
+				else
+					calendarMode = CalendarMode.FREE_EDIT_MODE;
 			}
 		}
 
