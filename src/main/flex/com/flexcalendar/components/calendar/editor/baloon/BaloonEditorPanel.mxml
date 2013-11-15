@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:editor="com.flexcalendar.components.calendar.editor.*" width="410"
+		   minHeight="{basicHeight}"
+		   backgroundAlpha="1.0" backgroundColor="#FFFFFF" borderColor="{bColor}" cornerRadius="15"
+		   borderStyle="solid" creationComplete="onCreationComplete()">
+	<mx:Script>
+    <![CDATA[
+		import com.flexcalendar.components.calendar.core.dataModel.Alarm;
+		import com.flexcalendar.components.calendar.core.dataModel.AlarmType;
+		import com.flexcalendar.components.calendar.editor.ItemEditorVO;
+
+		import mx.collections.ArrayCollection;
+		import mx.core.FlexGlobals;
+
+		private const bColor:Number = 0xa1a1a1;
+
+		[Embed(source="../../assets/close.png")]
+		protected const closeImg:Class;
+
+		[Bindable]
+		public var item:ItemEditorVO;
+
+		[Bindable]
+		public var isNew:Boolean = false;
+
+		public var saveCallback:Function;
+		public var cancelCallback:Function;
+		public var deleteCallback:Function;
+
+		[Bindable]
+		private var descWidth:int = 100;
+		[Bindable]
+		private var editWidth:int = 280;
+		[Bindable]
+		private var basicHeight:int = 300;
+		[Bindable]
+		private var tipHeight:int = 70;
+
+		[Bindable]
+		private var tipShouldBeDrawn:Boolean = true;
+
+		[Bindable]
+		public var alarmVariants:ArrayCollection;
+
+		[Bindable]
+		public var repeatVariants:ArrayCollection;
+
+		[Bindable]
+		public var intervalVariants:ArrayCollection;
+
+		[Bindable]
+		public var itemSetVariants:ArrayCollection;
+
+		[Bindable]
+		public var w1Label:String;
+		[Bindable]
+		public var w2Label:String;
+		[Bindable]
+		public var w3Label:String;
+		[Bindable]
+		public var w4Label:String;
+		[Bindable]
+		public var w5Label:String;
+		[Bindable]
+		public var w6Label:String;
+		[Bindable]
+		public var w7Label:String;
+
+		//address fields
+		[Bindable]
+		public var addressName:String;
+		[Bindable]
+		public var firstAddressLine:String;
+		[Bindable]
+		public var secondAddressLine:String;
+		[Bindable]
+		public var city:String;
+		[Bindable]
+		public var zip:String;
+		[Bindable]
+		public var state:String;
+
+		[Bindable]
+		public var repetitionAvailable:Boolean = true;
+
+		[Bindable]
+		public var alarmsAvailable:Boolean = false;
+
+		[Bindable]
+		public var addressAvailable:Boolean = false;
+
+		[Bindable]
+		public var validationErrorMessage:String = "";
+
+		/**
+		 * Component to work as a container for a tip
+		 */
+		private var tipContainer:Sprite = new Sprite();
+
+		private function get neededHeight():Number
+		{
+			return basicHeight + tipHeight;
+		}
+
+		public function calculatePosition(clickX:Number, clickY:Number):void
+		{
+			var horizontalAllowedForTipDrawing:Boolean;
+			if (this.parent.width - this.width > clickX + 115)
+			{
+				this.x = clickX + 115;
+				horizontalAllowedForTipDrawing = true;
+			}
+			else
+			{
+				this.x = this.parent.width - this.width;
+				horizontalAllowedForTipDrawing = false;
+			}
+
+			this.y = clickY > this.neededHeight ? clickY - this.neededHeight + 20 : 0;
+			if (clickY > this.neededHeight)
+			{
+				tipShouldBeDrawn = horizontalAllowedForTipDrawing;
+			}
+			else
+			{
+				tipShouldBeDrawn = false;
+			}
+		}
+
+		private function displayRepeatEvery(recurId:int):Boolean
+		{
+			return recurId != 1 && recurId != 2 && recurId != 3;
+		}
+
+		private function repeatOnVisible(recurId:int):Boolean
+		{
+			return recurId == 4;
+		}
+
+		private function OnClose():void
+		{
+			cancelCallback();
+		}
+
+		private function onCreationComplete():void
+		{
+			this.addEventListener(KeyboardEvent.KEY_UP, keyHandler, false, 0, true);
+			setDayNames();
+
+			tabNavigator.getTabAt(1).visible = alarmsAvailable;
+			tabNavigator.getTabAt(1).includeInLayout = alarmsAvailable
+			tabNavigator.getTabAt(2).visible = repetitionAvailable;
+			tabNavigator.getTabAt(2).includeInLayout = repetitionAvailable;
+			tabNavigator.getTabAt(3).visible = addressAvailable;
+			tabNavigator.getTabAt(3).includeInLayout = addressAvailable;
+		}
+
+		private function keyHandler(event:KeyboardEvent):void
+		{
+			if (event.keyCode == Keyboard.ESCAPE)
+			{
+				cancelCallback();
+			}
+		}
+
+		private function setDayNames():void
+		{
+			var dayLetters:Array = resourceManager.getString("controls", "dayNamesShortest").split(",");
+			w1Label = dayLetters[1];
+			w2Label = dayLetters[2];
+			w3Label = dayLetters[3];
+			w4Label = dayLetters[4];
+			w5Label = dayLetters[5];
+			w6Label = dayLetters[6];
+			w7Label = dayLetters[0];
+		}
+
+		private function onRecuringSelected(selected:Boolean):void
+		{
+			item.recurring = selected;
+		}
+
+		private function onFirstAlarmChange():void
+		{
+			if (firstAlarm.selectedIndex > 0 && firstAlarmValue.value > 0)
+				item.firstAlarm = new Alarm(AlarmType.valueOf(firstAlarm.selectedIndex - 1), firstAlarmValue.value)
+			else
+				item.firstAlarm = null;
+		}
+
+		private function onSecondAlarmChange():void
+		{
+			if (secondAlarm.selectedIndex > 0 && secondAlarmValue.value > 0)
+				item.secondAlarm = new Alarm(AlarmType.valueOf(secondAlarm.selectedIndex - 1), secondAlarmValue.value)
+			else
+				item.secondAlarm = null;
+		}
+
+		override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void
+		{
+			super.updateDisplayList(unscaledWidth, unscaledHeight);
+
+			if (!item.recurring && tipShouldBeDrawn)
+			{
+				if (tipContainer.parent != this)
+				{
+					rawChildren.addChild(tipContainer);
+				}
+				else
+				{
+					if (rawChildren.numChildren > 0)
+						rawChildren.setChildIndex(tipContainer, rawChildren.numChildren - 1)
+				}
+
+				var pt:Point = new Point(105, basicHeight + tipHeight);
+				var global:Point = FlexGlobals.topLevelApplication.localToGlobal(pt);
+				var origin:Point = global;
+				var destination:Point = new Point(200, basicHeight - 1);
+				var lineThickness:Number = 1;
+				var lineColor:Number = bColor;
+				var lineAlpha:Number = 1;
+
+				var g:Graphics = tipContainer.graphics;
+
+				g.beginFill(0xffffff, 1);
+				g.lineStyle(lineThickness, lineColor, lineAlpha);
+				g.moveTo(origin.x, origin.y);
+				g.lineTo(destination.x, destination.y);
+				g.lineStyle(lineThickness, 0xffffff, lineAlpha);
+				g.lineTo(160, basicHeight - 1);
+				g.lineStyle(lineThickness, lineColor, lineAlpha);
+				g.lineTo(origin.x, origin.y);
+
+				g.endFill();
+			}
+		}
+
+		/**
+		 * Sanity check of data in the editor.
+		 * @return true if changes can be saved. Otherwise false
+		 */
+		private function validateData():Boolean
+		{
+			if (item.start.time < item.end.time)
+			{
+				validationErrorMessage = "";
+				return true;
+			}
+			else
+			{
+				validationErrorMessage = resourceManager.getString('FlexCalendar', 'editor.time.error');
+				btnSave.errorString = validationErrorMessage;
+				return false;
+			}
+
+		}
+
+		private function saveAction():void
+		{
+			if (validateData())
+			{
+				saveCallback();
+			}
+		}
+
+		private function checkAlarm(alarm:Alarm):Number
+		{
+			return alarm ? (alarm as Alarm).value : 0;
+		}
+
+		private function checkAlarmIndex(alarm:Alarm):Number
+		{
+			return alarm ? AlarmType.indexOf((alarm as Alarm).alarmType) + 1 : -1
+		}
+		]]>
+</mx:Script>
+
+
+	<mx:Metadata>
+		[ResourceBundle("FlexCalendar")]
+	</mx:Metadata>
+
+	<mx:Image right="10" x="272" y="10" source="{closeImg}" click="OnClose()"/>
+
+	<mx:TabNavigator id="tabNavigator" top="30" left="10" right="10" height="{basicHeight - 70}">
+
+		<!--Basic details-->
+		<mx:VBox label="{resourceManager.getString('FlexCalendar','editor.dates')}" top="30"
+				 left="10" right="25" verticalGap="10" paddingRight="5" paddingLeft="5" paddingBottom="5">
+
+			<mx:HBox horizontalGap="10" width="100%">
+				<mx:Label text="{resourceManager.getString('FlexCalendar','editor.summary')}" width="{descWidth}"/>
+				<mx:TextInput id="summary" text="{item.summary}" width="100%" change="item.summary = summary.text"/>
+			</mx:HBox>
+
+			<mx:HBox horizontalGap="10" width="100%">
+				<mx:Label text="{resourceManager.getString('FlexCalendar','editor.description')}" width="{descWidth}"/>
+				<mx:TextArea id="description" text="{item.description}" width="100%"
+							 change="item.description = description.text"/>
+			</mx:HBox>
+
+
+			<mx:HBox horizontalGap="10" width="100%">
+				<mx:Label text="{resourceManager.getString('FlexCalendar','editor.from')}" width="{descWidth}"/>
+				<editor:DateTimeChooser id="start" selectedDate="{item.start}" width="100%"
+										change="item.start = start.selectedDate"/>
+			</mx:HBox>
+
+			<mx:HBox horizontalGap="10" width="100%">
+				<mx:Label text="{resourceManager.getString('FlexCalendar','editor.to')}" width="{descWidth}"/>
+				<editor:DateTimeChooser id="end" selectedDate="{item.end}" width="100%" change="item.end = end.selectedDate"/>
+			</mx:HBox>
+
+
+			<mx:HBox horizontalGap="10" width="100%">
+				<mx:Label text="{resourceManager.getString('FlexCalendar','editor.calendar')}" width="{descWidth}"/>
+				<mx:ComboBox id="itemSetBox" dataProvider="{itemSetVariants}"
+							 selectedIndex="{item.itemSetIndex}" change="item.itemSetIndex = itemSetBox.selectedIndex"/>
+			</mx:HBox>
+
+		</mx:VBox>
+
+		<!--Alarms tab-->
+		<mx:VBox label="{resourceManager.getString('FlexCalendar','editor.alarms')}"
+				 top="30" left="10" right="25" verticalGap="10">
+
+			<mx:HBox horizontalGap="10" width="100%">
+				<mx:Label text="{resourceManager.getString('FlexCalendar','editor.firstAlarm')}:" width="{descWidth}"/>
+				<mx:NumericStepper minimum="0" maximum="1000" id="firstAlarmValue"
+								   value="{checkAlarm(item.firstAlarm)}"
+								   change="onFirstAlarmChange()"/>
+				<mx:ComboBox id="firstAlarm" labelField="label" dataProvider="{alarmVariants}"
+							 selectedIndex="{checkAlarmIndex(item.firstAlarm)}"
+							 change="onFirstAlarmChange()"/>
+			</mx:HBox>
+
+			<mx:HBox horizontalGap="10" width="100%">
+				<mx:Label text="{resourceManager.getString('FlexCalendar','editor.secondAlarm')}:" width="{descWidth}"/>
+				<mx:NumericStepper minimum="0" maximum="1000" id="secondAlarmValue"
+								   value="{checkAlarm(item.secondAlarm)}"
+								   change="onSecondAlarmChange()"/>
+				<mx:ComboBox id="secondAlarm" labelField="label" dataProvider="{alarmVariants}"
+							 selectedIndex="{checkAlarmIndex(item.secondAlarm)}"
+							 change="onSecondAlarmChange()"/>
+			</mx:HBox>
+		</mx:VBox>
+
+		<!--Repetition tab-->
+		<mx:VBox label="{resourceManager.getString('FlexCalendar','editor.repetition')}"
+				 top="30" left="10" right="25" verticalGap="10">
+
+			<mx:HBox horizontalGap="10" width="100%">
+				<mx:Label text="{resourceManager.getString('FlexCalendar','editor.repeat')}" width="{descWidth}"/>
+				<mx:CheckBox id="recurring" selected="{item.recurring}" change="onRecuringSelected(recurring.selected)"/>
+			</mx:HBox>
+
+			<mx:VBox visible="{item.recurring}" includeInLayout="{item.recurring}" width="100%">
+
+				<mx:HBox horizontalGap="10" width="100%">
+					<mx:Label text="{resourceManager.getString('FlexCalendar','editor.repeats')}" width="{descWidth}"/>
+					<mx:ComboBox id="repeats" labelField="label" dataProvider="{repeatVariants}"
+								 selectedIndex="{item.repeatRuleId}"
+								 change="item.repeatRuleId = repeats.selectedIndex"/>
+				</mx:HBox>
+
+				<mx:HBox visible="{displayRepeatEvery(item.repeatRuleId)}"
+						 includeInLayout="{displayRepeatEvery(item.repeatRuleId)}" horizontalGap="10" width="100%">
+					<mx:Label text="{resourceManager.getString('FlexCalendar','editor.repeatsInterval')}" width="{descWidth}"/>
+					<mx:ComboBox id="interval" labelField="label" dataProvider="{intervalVariants}"
+								 selectedIndex="{item.interval}"
+								 change="item.interval = interval.selectedIndex"/>
+				</mx:HBox>
+
+				<mx:HBox visible="{repeatOnVisible(item.repeatRuleId)}" includeInLayout="{item.repeatRuleId == 4}"
+						 horizontalGap="8" width="100%">
+					<mx:Label text="{resourceManager.getString('FlexCalendar','editor.repeatOn')}" width="{descWidth}"/>
+					<mx:CheckBox id="w1" label="{w1Label}" selected="{item.MO}" change="item.MO = w1.selected"/>
+					<mx:CheckBox id="w2" label="{w2Label}" selected="{item.TU}" change="item.TU = w2.selected"/>
+					<mx:CheckBox id="w3" label="{w3Label}" selected="{item.WE}" change="item.WE = w3.selected"/>
+					<mx:CheckBox id="w4" label="{w4Label}" selected="{item.TH}" change="item.TH = w4.selected"/>
+					<mx:CheckBox id="w5" label="{w5Label}" selected="{item.FR}" change="item.FR = w5.selected"/>
+					<mx:CheckBox id="w6" label="{w6Label}" selected="{item.SA}" change="item.SA = w6.selected"/>
+					<mx:CheckBox id="w7" label="{w7Label}" selected="{item.SU}" change="item.SU = w7.selected"/>
+				</mx:HBox>
+
+				<mx:HBox horizontalGap="10" width="100%">
+					<mx:Label text="{resourceManager.getString('FlexCalendar','editor.endsOn')}" width="{descWidth}"/>
+					<mx:CheckBox id="endDateSpecified" label="{resourceManager.getString('FlexCalendar','editor.never')}"
+								 selected="{!item.endDateSpecified}"
+								 change="item.endDateSpecified = !endDateSpecified.selected"/>
+					<mx:DateField id="endsOn" selectedDate="{item.endDate}" enabled="{item.endDateSpecified}"
+								  change="item.endDate = endsOn.selectedDate"/>
+				</mx:HBox>
+
+			</mx:VBox>
+
+		</mx:VBox>
+
+		<!--Address tab-->
+		<mx:VBox label="{resourceManager.getString('FlexCalendar','editor.address')}"
+				 top="30" left="10" right="25" verticalGap="10" paddingRight="5" paddingLeft="5" paddingBottom="5">
+
+			<mx:HBox horizontalGap="10" width="100%">
+				<mx:Label text="{resourceManager.getString('FlexCalendar','editor.address.name')}:" width="{descWidth}"/>
+				<mx:TextInput id="addressNameField" text="{addressName}" width="100%"
+							  change="addressName = addressNameField.text"/>
+			</mx:HBox>
+
+			<mx:HBox horizontalGap="10" width="100%">
+				<mx:Label text="{resourceManager.getString('FlexCalendar','editor.address.line1')}:" width="{descWidth}"/>
+				<mx:TextInput id="addressLine1Field" text="{firstAddressLine}" width="100%"
+							  change="firstAddressLine = addressLine1Field.text"/>
+			</mx:HBox>
+
+			<mx:HBox horizontalGap="10" width="100%">
+				<mx:Label text="{resourceManager.getString('FlexCalendar','editor.address.line2')}:" width="{descWidth}"/>
+				<mx:TextInput id="addressLine2Field" text="{secondAddressLine}" width="100%"
+							  change="secondAddressLine = addressLine2Field.text"/>
+			</mx:HBox>
+
+			<mx:HBox horizontalGap="10" width="100%">
+				<mx:Label text="{resourceManager.getString('FlexCalendar','editor.address.city')}:" width="{descWidth}"/>
+				<mx:TextInput id="cityField" text="{city}" width="100%" change="city = cityField.text"/>
+			</mx:HBox>
+
+			<mx:HBox horizontalGap="10" width="100%">
+				<mx:Label text="{resourceManager.getString('FlexCalendar','editor.address.zip')}:" width="{descWidth}"/>
+				<mx:TextInput id="zipField" text="{zip}" width="100%" change="zip = zipField.text"/>
+			</mx:HBox>
+
+			<mx:HBox horizontalGap="10" width="100%">
+				<mx:Label text="{resourceManager.getString('FlexCalendar','editor.address.state')}:" width="{descWidth}"/>
+				<mx:TextInput id="stateField" text="{state}" width="100%" change="state = stateField.text"/>
+			</mx:HBox>
+
+		</mx:VBox>
+	</mx:TabNavigator>
+
+	<!--Controll buttons-->
+	<mx:Box horizontalAlign="right" width="100%" bottom="10" right="20">
+		<mx:HBox>
+			<mx:Button label="{resourceManager.getString('FlexCalendar','editor.delete')}" width="70" click="{deleteCallback()}"
+					   visible="{!isNew}"/>
+			<mx:Button label="{resourceManager.getString('FlexCalendar','editor.cancel')}" width="70" click="{cancelCallback()}"/>
+			<mx:Button id="btnSave" label="{resourceManager.getString('FlexCalendar','editor.save')}" width="70"
+					   click="{saveAction()}"/>
+		</mx:HBox>
+	</mx:Box>
+
+
+</mx:Canvas>
