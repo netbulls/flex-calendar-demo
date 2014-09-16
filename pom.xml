@@ -7,7 +7,7 @@
 	<description>Flex Calendar Demo</description>
 	<groupId>com.flex-calendar</groupId>
 	<artifactId>flex-calendar-demo</artifactId>
-	<version>2.0.0</version>
+	<version>2.1.0-RC1</version>
 	<packaging>swf</packaging>
 
 	<properties>
